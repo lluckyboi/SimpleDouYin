@@ -1,97 +1,59 @@
 type (
 	RegisterRequest {
-		UserTrueName string `json:"userTrueName"`
-		UserNickName string `json:"userNickName"`
-		Sex          string `json:"sex"`
-		UserSchool   string `json:"userSchool"`
-		UserStno     string `json:"userStno"`
-		UserRole     string `json:"userRole"`
-		UserPnum     string `json:"userPnum"`
-		UserPassword string `json:"userPassword"`
-		VCode        string `json:"vCode"`
+		UserName string `json:"username"`
+		PassWord string `json:"password"`
 	}
 	RegisterResponse {
-		Status int    `json:"status"`
-		Info   string `json:"info"`
-	}
-)
-
-type (
-	SendVCodeRequest {
-		PhoneNumber string `json:"phoneNumber"`
-	}
-	SendVCodeResponse {
-		Status int    `json:"status"`
-		Info   string `json:"info"`
+		StatusCode int32  `json:"status_code"`
+		StatusMsg  string `json:"status_msg"`
+		UserId     int64  `json:"user_id"`
+		Token      string `json:"token"`
 	}
 )
 
 type (
 	LoginRequest {
-		UserPnum     string `json:"userPnum"`
-		UserPassword string `json:"userPassword"`
+		UserName string `json:"username"`
+		Password string `json:"password"`
 	}
 	LoginResponse {
-		Status       int    `json:"status"`
-		Info         string `json:"info"`
-		AccessToken  string `json:"accessToken"`
-		AccessExpire int    `json:"accessExpire"`
-		RefreshToken string `json:"refreshToken"`
-		UserRole     string `json:"userRole"`
+		StatusCode int32  `json:"status_code"`
+		StatusMsg  string `json:"status_msg"`
+		UserId     int64  `json:"user_id"`
+		Token      string `json:"token"`
 	}
 )
 
 type (
-	RefreshTokenResponse {
-		Status       int    `json:"status"`
-		Info         string `json:"info"`
-		AccessToken  string `json:"accessToken"`
-		AccessExpire int    `json:"accessExpire"`
+	GetUserInfoRequest {
+		UserId int64  `json:"user_id"`
+		Token  string `json:"token"`
 	}
-)
-
-type (
 	GetUserInfoResponse {
-		Status       int    `json:"status"`
-		Info         string `json:"info"`
-		UserTrueName string `json:"userTrueName"`
-		UserNickName string `json:"userNickName"`
-		Sex          string `json:"sex"`
-		UserSchool   string `json:"userSchool"`
-		UserStno     string `json:"userStno"`
-		UserRole     string `json:"userRole"`
-		UserPnum     string `json:"userPnum"`
-		UserPassword string `json:"-"`
+		StatusCode int32  `json:"status_code"`
+		StatusMsg  string `json:"status_msg"`
 	}
 )
 
 @server (
-	group: lg
+	group: login_register
 )
-service userLoginRegister {
-	@doc "发送手机验证码"
-	@handler SendVCode
-	post /user/sendvcode(SendVCodeRequest) returns (SendVCodeResponse)
-	
+service User {
 	@doc "用户注册"
 	@handler UserRegister
-	post /user/register(RegisterRequest) returns (RegisterRequest)
+	post /douyin/user/register(RegisterRequest) returns (RegisterRequest)
 	
 	@doc "用户登录"
 	@handler UserLogin
-	post /user/login(LoginRequest) returns (LoginResponse)
+	post /douyin/user/login(LoginRequest) returns (LoginResponse)
 }
 
 @server (
 	group: token
 	middleware: JWT
 )
-service userLoginRegister{
-	@doc "刷新token"
-	@handler RefreshToken
-	get /user/refreshtk returns (RefreshTokenResponse)
-	
+service User{
 	@doc "获取用户信息"
 	@handler GetUserInfo
-	get /user/getuserinfo returns (GetUserInfoResponse)
+	get /douyin/user returns (GetUserInfoResponse)
 }

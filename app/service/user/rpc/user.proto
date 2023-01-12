@@ -3,54 +3,23 @@ package login_register;
 option go_package = "./pb";
 
 message RegisterReq{
-  string UserTrueName=1;
-  string UserNickName=2;
-  string Sex=3;
-  string UserSchool=4;
-  string UserStno=5;
-  string UserRole=6;
-  string UserPnum=7;
-  string UserPassword=8;
-  string VCode=9;
 }
 message RegisterRes{
-  string msg=1;
-  string status=2;
 }
 
-message SendVCodeReq{
-  string phoneNumber=1;
-}
-message SendVCodeRes{
-  string mes=1;
-}
 
 message LoginReq{
-  string UserPnum=1;
-  string PassWord=2;
 }
 message LoginReps{
-  string Status=1;
-  string Info=2;
 }
 
-message GetInfoByPnumReq{
-  string UserPnum=1;
+message GetInfoReq{
 }
-message GetInfoByPnumReps{
-  string UserTrueName=1;
-  string UserNickName=2;
-  string Sex=3;
-  string UserSchool=4;
-  string UserStno=5;
-  string UserRole=6;
-  string UserPnum=7;
-  string Status=8;
-  string Info=9;
+message GetInfoReps{
+
 }
 service User{
   rpc Register(RegisterReq) returns(RegisterRes);
-  rpc SendVCode(SendVCodeReq) returns(SendVCodeRes);
   rpc Login(LoginReq) returns(LoginReps);
-  rpc GetInfoByPnum(GetInfoByPnumReq) returns(GetInfoByPnumReps);
+  rpc GetInfoByPnum(GetInfoReq) returns(GetInfoReps);
 }
