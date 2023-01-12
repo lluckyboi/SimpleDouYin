@@ -1,0 +1,14 @@
+Name: userloginregister.rpc
+ListenOn: 0.0.0.0:8085
+Etcd:
+  Hosts:
+  - 0.0.0.0:2379
+  Key: userloginregister.rpc
+DB:
+  DataSource: root:de1bb35e3234f344@tcp(39.106.81.229:3306)/gzdemo?charset=utf8mb4&parseTime=true&loc=Local
+Cache:
+  - Host: 121.36.13.49:6379
+    pass: 123456
+RedisDB:
+  RHost: "121.36.13.49:6379"
+  RPass: "123456"
