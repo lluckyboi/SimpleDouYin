@@ -32,5 +32,6 @@ func (l *UserRegisterLogic) UserRegister(req *types.RegisterRequest) (resp *type
 	})
 	resp.StatusMsg = RgRes.StatusMsg
 	resp.StatusCode = RgRes.StatusCode
+	resp.UserId = RgRes.UserId
 	return resp, nil
 }
