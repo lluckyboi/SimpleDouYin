@@ -54,21 +54,10 @@ func GenerateRSAKey(bits int) {
 }
 
 // RSA_Encrypt RSA加密
-func RSA_Encrypt(plainText []byte, path string) string {
-	//打开文件
-	file, err := os.Open(path)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-	//读取文件的内容
-	info, _ := file.Stat()
-	buf := make([]byte, info.Size())
-	file.Read(buf)
+func RSA_Encrypt(plainText []byte, SecPub []byte) string {
 	//pem解码
-	block, _ := pem.Decode(buf)
+	block, _ := pem.Decode(SecPub)
 	//x509解码
-
 	publicKeyInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err != nil {
 		panic(err)
@@ -86,19 +75,9 @@ func RSA_Encrypt(plainText []byte, path string) string {
 }
 
 // RSA_Decrypt RSA解密
-func RSA_Decrypt(cipherText []byte, path string) []byte {
-	//打开文件
-	file, err := os.Open(path)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-	//获取文件内容
-	info, _ := file.Stat()
-	buf := make([]byte, info.Size())
-	file.Read(buf)
+func RSA_Decrypt(cipherText []byte, SecPri []byte) []byte {
 	//pem解码
-	block, _ := pem.Decode(buf)
+	block, _ := pem.Decode(SecPri)
 	//X509解码
 	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
