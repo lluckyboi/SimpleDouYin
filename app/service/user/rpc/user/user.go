@@ -19,6 +19,7 @@ type (
 	LoginReq    = pb.LoginReq
 	RegisterReq = pb.RegisterReq
 	RegisterRes = pb.RegisterRes
+	UserInfo    = pb.UserInfo
 
 	User interface {
 		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterRes, error)
