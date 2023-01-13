@@ -17,7 +17,7 @@ type Config struct {
 		RPass string
 	}
 	Sec struct {
-		SecPri string
-		SecPub string
+		SecPri []byte
+		SecPub []byte
 	}
 }
