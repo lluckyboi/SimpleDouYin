@@ -1,7 +1,7 @@
 version: "0.1"
 database:
 # consult[https://gorm.io/docs/connecting_to_the_database.html]"
-  dsn: "root:de1bb35e3234f344@tcp(39.106.81.229:3306)/gzdemo?charset=utf8mb4&parseTime=true&loc=Local"
+  dsn: ""
 # input mysql or postgres or sqlite or sqlserver. consult[https://gorm.io/docs/connecting_to_the_database.html]
   db  : "mysql"
 # enter the required data table or leave it blank.You can input : orders,users,goods
