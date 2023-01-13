@@ -3,21 +3,45 @@ package login_register;
 option go_package = "./pb";
 
 message RegisterReq{
+  string username=1;
+  string password=2;
 }
 message RegisterRes{
+  int32 status_code=1;
+  string status_msg=2;
+  int64 user_id=3;
+  string token=4;
 }
 
 
 message LoginReq{
+  string username=1;
+  string password=2;
 }
 message LoginReps{
+  int32 status_code=1;
+  string status_msg=2;
+  int64 user_id=3;
+  string token=4;
 }
 
 message GetInfoReq{
+  int64 user_id=1;
+  string token=2;
 }
 message GetInfoReps{
-
+  int32 status_code=1;
+  string status_msg=2;
+  UserInfo user=3;
 }
+message UserInfo{
+  int64 user_id=1;
+  string name=2;
+  int64 follow_count=3;
+  int64 follower_count=4;
+  bool is_follow=5;
+}
+
 service User{
   rpc Register(RegisterReq) returns(RegisterRes);
   rpc Login(LoginReq) returns(LoginReps);
