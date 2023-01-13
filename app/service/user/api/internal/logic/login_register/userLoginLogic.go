@@ -1,10 +1,10 @@
 package login_register
 
 import (
-	"context"
-
 	"SimpleDouYin/app/service/user/api/internal/svc"
 	"SimpleDouYin/app/service/user/api/internal/types"
+	"SimpleDouYin/app/service/user/rpc/user"
+	"context"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,7 +24,30 @@ func NewUserLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserLog
 }
 
 func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginResponse, err error) {
-	// todo: add your logic here and delete this line
+	resp = new(types.LoginResponse)
+	//验证用户名是否存在
+	bl := l.svcCtx.RedisDB.SIsMember("username", req.UserName)
+	if bl.Val() == false {
+		resp.StatusMsg = "用户名不存在"
+		resp.StatusCode = 2001
+		return resp, nil
+	}
+	logx.Info("验证用户名是否存在 success")
 
+	//验证账号密码
+	rst, err := l.svcCtx.UserClient.Login(l.ctx, &user.LoginReq{
+		Username: req.UserName,
+		Password: req.Password,
+	})
+	resp.StatusCode = rst.StatusCode
+	resp.StatusMsg = rst.StatusMsg
+	if err != nil {
+		logx.Error("验证密码错误: ", err)
+		return resp, nil
+	}
+	if rst.StatusCode == 500 || rst.StatusCode == 2001 {
+		return resp, nil
+	}
+	logx.Info("验证密码 success")
 	return
 }

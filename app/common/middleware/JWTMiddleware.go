@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"SimpleDouYin/app/common"
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"go-zero-demo/app/common"
 	"log"
 	"net/http"
 	"strings"
