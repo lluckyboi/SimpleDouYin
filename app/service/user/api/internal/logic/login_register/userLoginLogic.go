@@ -34,13 +34,14 @@ func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginRe
 	}
 	logx.Info("验证用户名是否存在 success")
 
-	//验证账号密码
+	//登录
 	rst, err := l.svcCtx.UserClient.Login(l.ctx, &user.LoginReq{
 		Username: req.UserName,
 		Password: req.Password,
 	})
 	resp.StatusCode = rst.StatusCode
 	resp.StatusMsg = rst.StatusMsg
+	resp.UserId = rst.UserId
 	if err != nil {
 		logx.Error("验证密码错误: ", err)
 		return resp, nil
@@ -49,5 +50,7 @@ func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginRe
 		return resp, nil
 	}
 	logx.Info("验证密码 success")
+
+	//token
 	return
 }
