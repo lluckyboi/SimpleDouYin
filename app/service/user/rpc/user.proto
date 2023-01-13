@@ -5,6 +5,7 @@ option go_package = "./pb";
 message RegisterReq{
   string username=1;
   string password=2;
+  string name=3;
 }
 message RegisterRes{
   int32 status_code=1;
@@ -42,5 +43,5 @@ message UserInfo{
 service User{
   rpc Register(RegisterReq) returns(RegisterRes);
   rpc Login(LoginReq) returns(LoginReps);
-  rpc GetInfoByPnum(GetInfoReq) returns(GetInfoReps);
+  rpc GetInfo(GetInfoReq) returns(GetInfoReps);
 }
