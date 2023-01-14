@@ -28,7 +28,7 @@ func NewUserLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserLog
 func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginResponse, err error) {
 	resp = new(types.LoginResponse)
 	//验证用户名是否存在
-	bl := l.svcCtx.RedisDB.SIsMember("username", req.UserName)
+	bl := l.svcCtx.RedisDB.SIsMember(common.RedisUserNameCacheKey, req.UserName)
 	if bl.Val() == false {
 		resp.StatusMsg = "用户名不存在"
 		resp.StatusCode = common.ErrNoSuchUser

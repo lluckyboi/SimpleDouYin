@@ -34,6 +34,12 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *typ
 		return
 	}
 
+	//查询id是否存在
+	bl := l.svcCtx.RedisDB.SIsMember(common.RedisUserIdCacheKey, req.UserId)
+	if bl.Val() == true {
+
+	}
+
 	//调用rpc查询
 	GRsp, err := l.svcCtx.UserClient.GetInfo(l.ctx, &user.GetInfoReq{
 		UserId:   claims.UserId,

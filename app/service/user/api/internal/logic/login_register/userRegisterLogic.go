@@ -28,7 +28,7 @@ func NewUserRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *User
 func (l *UserRegisterLogic) UserRegister(req *types.RegisterRequest) (resp *types.RegisterResponse, error error) {
 	resp = new(types.RegisterResponse)
 	//先查询用户名是否已注册
-	bl := l.svcCtx.RedisDB.SIsMember("username", req.UserName)
+	bl := l.svcCtx.RedisDB.SIsMember(common.RedisUserNameCacheKey, req.UserName)
 	if bl.Val() == true {
 		resp.StatusMsg = "用户名已存在"
 		resp.StatusCode = common.ErrAlreadyHaveUser
