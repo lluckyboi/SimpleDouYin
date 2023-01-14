@@ -92,8 +92,10 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (regs *pb.RegisterRes, err 
 		return regs, nil
 	}
 
-	//用户名写入缓存
+	//用户名和id写入缓存
 	l.svcCtx.Redis.SAdd("username", in.Username)
+	l.svcCtx.Redis.SAdd("user_id", User.UserID)
+
 	regs.StatusCode = http.StatusOK
 	regs.StatusMsg = "注册成功"
 	regs.UserId = User.UserID
