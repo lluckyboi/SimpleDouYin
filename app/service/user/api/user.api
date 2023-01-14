@@ -2,7 +2,6 @@ type (
 	RegisterRequest {
 		UserName string `json:"username"`
 		PassWord string `json:"password"`
-		Name     string `json:"name"`
 	}
 	RegisterResponse {
 		StatusCode int32  `json:"status_code"`

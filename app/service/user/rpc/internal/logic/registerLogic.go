@@ -4,6 +4,7 @@ import (
 	"SimpleDouYin/app/common"
 	"SimpleDouYin/app/service/user/dao/model"
 	"context"
+	"time"
 
 	"SimpleDouYin/app/service/user/rpc/internal/svc"
 	"SimpleDouYin/app/service/user/rpc/pb"
@@ -28,8 +29,9 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 func (l *RegisterLogic) Register(in *pb.RegisterReq) (regs *pb.RegisterRes, err error) {
 	User := model.User{
 		Username: in.Username,
-		Name:     in.Name,
+		Name:     "用户" + time.Now().String(),
 	}
+
 	//RSA 密码公钥加密
 	User.Password = common.RSA_Encrypt([]byte(in.Password), l.svcCtx.Config.Sec.SecPub)
 
