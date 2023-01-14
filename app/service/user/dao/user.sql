@@ -10,3 +10,9 @@ create table user
         unique (user_id)
 );
 
+create table follow
+(
+    uid        BIGINT not null comment '关注者id',
+    target_uid BIGINT not null comment '被关注者id'
+)
+    comment '关注表';
