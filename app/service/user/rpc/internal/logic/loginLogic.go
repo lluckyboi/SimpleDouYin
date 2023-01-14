@@ -26,18 +26,20 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 	}
 }
 
-func (l *LoginLogic) Login(in *pb.LoginReq) (resp *pb.LoginReps, error error) {
+func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginReps, error) {
+	resp := new(pb.LoginReps)
 	user := model.User{}
 	err := l.svcCtx.GormDB.Where("username = ?", in.Username).First(&user)
 	if err.Error != nil {
 		resp.StatusCode = common.ErrOfServer
 		resp.StatusMsg = common.InfoErrOfServer
 		logx.Error("登录:查询用户名错误:", err)
-		return
+		return resp, nil
 	}
 	if common.RSA_Encrypt([]byte(in.Password), l.svcCtx.Config.Sec.SecPub) != user.Password {
 		resp.StatusCode = common.ErrWrongPassword
 		resp.StatusMsg = "密码错误"
+		return resp, nil
 	}
 
 	resp.StatusCode = http.StatusOK

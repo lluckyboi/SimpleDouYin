@@ -29,7 +29,8 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 	}
 }
 
-func (l *RegisterLogic) Register(in *pb.RegisterReq) (regs *pb.RegisterRes, err error) {
+func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
+	regs := new(pb.RegisterRes)
 	User := model.User{
 		Username: in.Username,
 		Name:     "用户" + time.Now().String(),
@@ -39,7 +40,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (regs *pb.RegisterRes, err 
 	sk, err := common.NewSnowflake(1, 1)
 	if err != nil {
 		logx.Error(err)
-		return
+		return regs, nil
 	}
 	User.UserID = sk.NextVal()
 
@@ -59,13 +60,13 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (regs *pb.RegisterRes, err 
 				regs.StatusCode = common.ErrOfServer
 				regs.StatusMsg = common.InfoErrOfServer
 				logx.Error("时间戳解析错误：", err)
-				return
+				return regs, nil
 			}
 			if lastTP >= User.UserID {
 				regs.StatusCode = common.ErrOfServer
 				regs.StatusMsg = common.InfoErrOfServer
 				logx.Error("可能出现时钟回拨")
-				return
+				return regs, nil
 			} else {
 				l.svcCtx.Redis.Set("userid_last_timestamp", strconv.FormatInt(common.GetTimestamp(User.UserID), 10), 0)
 			}
@@ -76,7 +77,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (regs *pb.RegisterRes, err 
 			regs.StatusCode = common.ErrOfServer
 			regs.StatusMsg = common.InfoErrOfServer
 			logx.Error("获取时间戳错误:", cmd.Err())
-			return
+			return regs, nil
 		}
 	}
 
