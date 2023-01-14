@@ -50,7 +50,6 @@ service User {
 
 @server (
 	group: token
-	middleware: JWT
 )
 service User{
 	@doc "获取用户信息"
