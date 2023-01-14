@@ -1,33 +1,26 @@
 package common
 
 import (
+	"SimpleDouYin/app/service/user/dao/model"
 	"errors"
 	jwt "github.com/dgrijalva/jwt-go"
-	"go-zero-demo/app/service/user/dao/model"
 	"time"
 )
 
 type MyClaims struct {
-	UserPnum string
-	UserRole string
-	IsRef    bool //是否refresh_token
+	UserId int64
 	jwt.StandardClaims
 }
 
 // TSInfo 存储在JWTMap里供给Logic使用的信息
 type TSInfo struct {
-	UserPnum string
-	UserRole string
-	IsRef    bool //是否refresh_token
+	UserId int64
 }
 
 const ExpTD = 7
 
 // AccessTokenExpireDuration 定义AccessToken的过期时间
 const AccessTokenExpireDuration = time.Hour * 24 * ExpTD
-
-// RefreshTokenExpireDuration 定义RefreshToken的过期时间
-const RefreshTokenExpireDuration = AccessTokenExpireDuration*2 + time.Hour*24
 
 // MySecret 自定义签名字段
 var MySecret = []byte("ayanami")
@@ -36,30 +29,10 @@ var MySecret = []byte("ayanami")
 func GenAccessToken(user model.User) (string, error) {
 	// 创建一个我们自己的声明
 	c := MyClaims{
-		user.UserPnum,
-		user.UserRole,
-		false,
+		user.UserID,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(AccessTokenExpireDuration).Unix(), // 过期时间
 			Issuer:    "Lcuky",                                          // 签发人
-		},
-	}
-	// 使用指定的签名方法创建签名对象
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
-	// 使用指定的secret签名并获得完整的编码后的字符串token
-	return token.SignedString(MySecret)
-}
-
-// GenRefreshToken 生成RefreshToken
-func GenRefreshToken(user model.User) (string, error) {
-	// 创建一个我们自己的声明
-	c := MyClaims{
-		user.UserPnum,
-		user.UserRole,
-		true,
-		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(RefreshTokenExpireDuration).Unix(), // 过期时间
-			Issuer:    "Lcuky",                                           // 签发人
 		},
 	}
 	// 使用指定的签名方法创建签名对象

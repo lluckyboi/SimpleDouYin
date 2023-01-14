@@ -53,9 +53,7 @@ func (m *JWTMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 
 		//写入上下文
 		userInfo := common.TSInfo{
-			UserPnum: mc.UserPnum,
-			UserRole: mc.UserRole,
-			IsRef:    mc.IsRef,
+			UserId: mc.UserId,
 		}
 		m.JWTMap.Set("UserInfo", userInfo)
 		log.Println("JWT Auth Success")
