@@ -28,15 +28,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.JWT},
-			[]rest.Route{
-				{
-					Method:  http.MethodGet,
-					Path:    "/douyin/user",
-					Handler: token.GetUserInfoHandler(serverCtx),
-				},
-			}...,
-		),
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/douyin/user",
+				Handler: token.GetUserInfoHandler(serverCtx),
+			},
+		},
 	)
 }
