@@ -62,5 +62,5 @@ service User {
 service User{
 	@doc "获取用户信息"
 	@handler GetUserInfo
-	get /douyin/user returns (GetUserInfoResponse)
+	post /douyin/user(GetUserInfoRequest) returns (GetUserInfoResponse)
 }
