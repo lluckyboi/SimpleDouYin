@@ -36,8 +36,10 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *typ
 
 	//查询id是否存在
 	bl := l.svcCtx.RedisDB.SIsMember(common.RedisUserIdCacheKey, req.UserId)
-	if bl.Val() == true {
-
+	if bl.Val() == false {
+		resp.StatusCode = common.ErrNoSuchUser
+		resp.StatusMsg = "无效的id"
+		return
 	}
 
 	//调用rpc查询
