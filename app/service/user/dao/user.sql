@@ -1,6 +1,6 @@
 create table user
 (
-    user_id        bigint auto_increment comment 'id',
+    user_id        bigint           not null comment 'id',
     username       varchar(255)     not null,
     password       varchar(255)     not null,
     name           varchar(50)      null,
