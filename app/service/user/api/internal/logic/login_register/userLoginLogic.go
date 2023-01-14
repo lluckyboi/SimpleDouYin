@@ -31,7 +31,7 @@ func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginRe
 	bl := l.svcCtx.RedisDB.SIsMember("username", req.UserName)
 	if bl.Val() == false {
 		resp.StatusMsg = "用户名不存在"
-		resp.StatusCode = 2001
+		resp.StatusCode = common.ErrNoSuchUser
 		return resp, nil
 	}
 	logx.Info("验证用户名是否存在 success")
@@ -48,7 +48,7 @@ func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginRe
 		logx.Error("验证密码错误: ", err)
 		return resp, nil
 	}
-	if rst.StatusCode == 500 || rst.StatusCode == 2001 {
+	if rst.StatusCode == common.ErrOfServer || rst.StatusCode == common.ErrWrongPassword {
 		return resp, nil
 	}
 	logx.Info("验证密码 success")
@@ -57,6 +57,8 @@ func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginRe
 	user := model.User{UserID: rst.UserId}
 	resp.Token, err = common.GenAccessToken(user)
 	if err != nil {
+		resp.StatusCode = common.ErrOfServer
+		resp.StatusMsg = common.InfoErrOfServer
 		logx.Error("生成token错误：", err)
 		return
 	}

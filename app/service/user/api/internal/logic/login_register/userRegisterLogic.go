@@ -31,7 +31,7 @@ func (l *UserRegisterLogic) UserRegister(req *types.RegisterRequest) (resp *type
 	bl := l.svcCtx.RedisDB.SIsMember("username", req.UserName)
 	if bl.Val() == true {
 		resp.StatusMsg = "用户名已存在"
-		resp.StatusCode = 2002
+		resp.StatusCode = common.ErrAlreadyHaveUser
 		return resp, nil
 	}
 	//调rpc入库
@@ -48,6 +48,8 @@ func (l *UserRegisterLogic) UserRegister(req *types.RegisterRequest) (resp *type
 	user := model.User{UserID: RgRes.UserId}
 	token, err := common.GenAccessToken(user)
 	if err != nil {
+		resp.StatusCode = common.ErrOfServer
+		resp.StatusMsg = common.InfoErrOfServer
 		logx.Error("生成token错误：", err)
 		return
 	}

@@ -5,6 +5,7 @@ import (
 	"SimpleDouYin/app/service/user/dao/model"
 	"context"
 	"github.com/zeromicro/go-zero/core/stores/redis"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -55,10 +56,14 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (regs *pb.RegisterRes, err 
 		{
 			lastTP, err := strconv.ParseInt(l.svcCtx.Redis.Get("userid_last_timestamp").String(), 10, 64)
 			if err != nil {
+				regs.StatusCode = common.ErrOfServer
+				regs.StatusMsg = common.InfoErrOfServer
 				logx.Error("时间戳解析错误：", err)
 				return
 			}
 			if lastTP >= User.UserID {
+				regs.StatusCode = common.ErrOfServer
+				regs.StatusMsg = common.InfoErrOfServer
 				logx.Error("可能出现时钟回拨")
 				return
 			} else {
@@ -68,7 +73,10 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (regs *pb.RegisterRes, err 
 	//报错了 返回
 	default:
 		{
+			regs.StatusCode = common.ErrOfServer
+			regs.StatusMsg = common.InfoErrOfServer
 			logx.Error("获取时间戳错误:", cmd.Err())
+			return
 		}
 	}
 
@@ -79,14 +87,14 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (regs *pb.RegisterRes, err 
 	ds := l.svcCtx.GormDB.Create(&User)
 	if ds.Error != nil {
 		regs.StatusMsg = "服务器错误"
-		regs.StatusCode = 500
+		regs.StatusCode = common.ErrOfServer
 		logx.Error("user Register 密码入库错误:", ds.Error)
 		return regs, nil
 	}
 
 	//用户名写入缓存
 	l.svcCtx.Redis.SAdd("username", in.Username)
-	regs.StatusCode = 200
+	regs.StatusCode = http.StatusOK
 	regs.StatusMsg = "注册成功"
 	regs.UserId = User.UserID
 	return regs, nil

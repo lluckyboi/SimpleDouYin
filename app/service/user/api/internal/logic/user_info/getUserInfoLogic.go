@@ -29,6 +29,7 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *typ
 	//解析token
 	claims, err := common.ParseToken(req.Token)
 	if err != nil {
+		resp.StatusCode = common.ErrFailParseToken
 		logx.Error(err)
 		return
 	}
@@ -39,6 +40,8 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *typ
 		TargetId: req.UserId,
 	})
 	if err != nil {
+		resp.StatusCode = common.ErrOfServer
+		resp.StatusMsg = common.InfoErrOfServer
 		logx.Error(err)
 		return
 	}

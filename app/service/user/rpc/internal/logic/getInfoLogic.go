@@ -24,7 +24,7 @@ func NewGetInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetInfoLo
 }
 
 func (l *GetInfoLogic) GetInfo(in *pb.GetInfoReq) (*pb.GetInfoReps, error) {
-	// todo: add your logic here and delete this line
+	//
 
 	return &pb.GetInfoReps{}, nil
 }
