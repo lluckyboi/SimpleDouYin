@@ -1,8 +1,10 @@
 package login_register
 
 import (
+	"SimpleDouYin/app/common"
 	"SimpleDouYin/app/service/user/api/internal/svc"
 	"SimpleDouYin/app/service/user/api/internal/types"
+	"SimpleDouYin/app/service/user/dao/model"
 	"SimpleDouYin/app/service/user/rpc/user"
 	"context"
 
@@ -52,5 +54,11 @@ func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginRe
 	logx.Info("验证密码 success")
 
 	//token
+	user := model.User{UserID: rst.UserId}
+	resp.Token, err = common.GenAccessToken(user)
+	if err != nil {
+		logx.Error("生成token错误：", err)
+		return
+	}
 	return
 }
