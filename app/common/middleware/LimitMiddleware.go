@@ -14,11 +14,6 @@ const (
 	Seconds = 1
 	// Quota 请求上限
 	Quota = 100
-	// KeyPrefix key前缀
-	KeyPrefix = "periodlimit"
-
-	KeyUserApi = "user_api"
-	KeyUserRpc = "user_rpc"
 )
 
 type LimitMiddleware struct {
@@ -36,7 +31,7 @@ func op(r *redis.Redis) {
 
 func (lm *LimitMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		l := limit.NewPeriodLimit(Seconds, Quota, redis.New(common.RedisAddr, op), KeyPrefix)
+		l := limit.NewPeriodLimit(Seconds, Quota, redis.New(common.RedisAddr, op), common.LimitKeyPrefix)
 		// 0：表示错误，比如可能是redis故障、过载
 		// 1：允许
 		// 2：允许但是当前窗口内已到达上限

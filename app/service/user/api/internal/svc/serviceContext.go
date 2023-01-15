@@ -28,7 +28,7 @@ func NewServiceContext(c config.Config, JWTMap *common.JWTMap) *ServiceContext {
 		UserClient:      user.NewUser(zrpc.MustNewClient(c.UserClient)),
 		JWTMap:          JWTMap,
 		CORSMiddleware:  middleware.NewCORSMiddleware().Handle,
-		LimitMiddleware: middleware.NewLimitMiddleware(middleware.KeyUserApi).Handle,
+		LimitMiddleware: middleware.NewLimitMiddleware(common.LimitKeyUserApi).Handle,
 		RedisDB: redis.NewClient(&redis.Options{
 			Addr:     c.RedisDB.RHost,
 			Password: c.RedisDB.RPass,
