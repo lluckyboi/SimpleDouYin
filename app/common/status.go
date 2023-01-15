@@ -6,13 +6,15 @@ const (
 	ErrAlreadyHaveUser = 2002 //用户名已存在
 	ErrWrongPassword   = 2003 //密码错误
 	ErrFailParseToken  = 2004 //解析token错误
+	ErrLimitedRequest  = 2005 //请求被限流
+	ErrRejectedRequest = 2006 //请求被拒绝
 )
 
 const (
 	InfoErrOfServer = "服务器错误"
 )
 
-type OKResp struct {
+type Resp struct {
 	Status int    `json:"status_code"`
 	Info   string `json:"status_msg"`
 }
