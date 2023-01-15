@@ -13,8 +13,9 @@ import (
 type ServiceContext struct {
 	Config config.Config
 
-	JWT            rest.Middleware
-	CORSMiddleware rest.Middleware
+	JWT             rest.Middleware
+	CORSMiddleware  rest.Middleware
+	LimitMiddleware rest.Middleware
 
 	JWTMap     *common.JWTMap
 	UserClient user.User
@@ -23,10 +24,11 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config, JWTMap *common.JWTMap) *ServiceContext {
 	return &ServiceContext{
-		Config:         c,
-		UserClient:     user.NewUser(zrpc.MustNewClient(c.UserClient)),
-		JWTMap:         JWTMap,
-		CORSMiddleware: middleware.NewCORSMiddleware().Handle,
+		Config:          c,
+		UserClient:      user.NewUser(zrpc.MustNewClient(c.UserClient)),
+		JWTMap:          JWTMap,
+		CORSMiddleware:  middleware.NewCORSMiddleware().Handle,
+		LimitMiddleware: middleware.NewLimitMiddleware(middleware.KeyUserApi).Handle,
 		RedisDB: redis.NewClient(&redis.Options{
 			Addr:     c.RedisDB.RHost,
 			Password: c.RedisDB.RPass,
