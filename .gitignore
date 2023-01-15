@@ -1,1 +1,2 @@
-user.yaml
+/app/service/user/api/etc/user.yaml
+/app/common/password.go
