@@ -58,6 +58,7 @@ service User {
 
 @server (
 	group: user_info
+	middleware:	CORSMiddleware
 )
 service User{
 	@doc "获取用户信息"
