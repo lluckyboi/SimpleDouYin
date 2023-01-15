@@ -11,3 +11,8 @@ const (
 const (
 	InfoErrOfServer = "服务器错误"
 )
+
+type OKResp struct {
+	Status int    `json:"status_code"`
+	Info   string `json:"status_msg"`
+}
