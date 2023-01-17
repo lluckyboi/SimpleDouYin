@@ -54,7 +54,15 @@ func GenerateRSAKey(bits int) {
 }
 
 // RSA_Encrypt RSA加密
-func RSA_Encrypt(plainText []byte, SecPub []byte) string {
+func RSA_Encrypt(plainText []byte, OriSecPub []byte, IsBase64 bool) string {
+	//如果被base64编码过，先解码
+	var SecPub []byte
+	if IsBase64 {
+		base64.StdEncoding.Decode(SecPub, OriSecPub)
+	} else {
+		SecPub = OriSecPub
+	}
+
 	//pem解码
 	block, _ := pem.Decode(SecPub)
 	//x509解码
