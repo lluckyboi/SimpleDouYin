@@ -4,10 +4,9 @@ import (
 	"strings"
 )
 
-func StrBuilder(n int, str string) string {
+func RedisStrBuilder(key string) string {
 	var builder strings.Builder
-	for i := 0; i < n; i++ {
-		builder.WriteString(str)
-	}
+	builder.WriteString(key)
+	builder.WriteString(": ")
 	return builder.String()
 }

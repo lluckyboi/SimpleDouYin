@@ -2,8 +2,8 @@
 package types
 
 type RegisterRequest struct {
-	UserName string `json:"username" form:"username"`
-	PassWord string `json:"password" form:"password"`
+	UserName string `form:"username"`
+	PassWord string `form:"password"`
 }
 
 type RegisterResponse struct {
@@ -14,8 +14,8 @@ type RegisterResponse struct {
 }
 
 type LoginRequest struct {
-	UserName string `json:"username" form:"username"`
-	PassWord string `json:"password" form:"password"`
+	UserName string `form:"username"`
+	PassWord string `form:"password"`
 }
 
 type LoginResponse struct {
@@ -26,8 +26,8 @@ type LoginResponse struct {
 }
 
 type GetUserInfoRequest struct {
-	UserId int64  `json:"user_id" query:"user_id"`
-	Token  string `json:"token" query:"token"`
+	UserId int64  `form:"user_id"`
+	Token  string `form:"token"`
 }
 
 type GetUserInfoResponse struct {

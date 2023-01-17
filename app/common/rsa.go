@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/pem"
+	"github.com/zeromicro/go-zero/core/logx"
 	"os"
 )
 
@@ -56,13 +57,16 @@ func GenerateRSAKey(bits int) {
 // RSA_Encrypt RSA加密
 func RSA_Encrypt(plainText []byte, OriSecPub []byte, IsBase64 bool) string {
 	//如果被base64编码过，先解码
-	var SecPub []byte
+	SecPub := make([]byte, base64.StdEncoding.DecodedLen(len(OriSecPub)))
 	if IsBase64 {
-		base64.StdEncoding.Decode(SecPub, OriSecPub)
+		_, err := base64.StdEncoding.Decode(SecPub, OriSecPub)
+		if err != nil {
+			logx.Error(err)
+			return ""
+		}
 	} else {
 		SecPub = OriSecPub
 	}
-
 	//pem解码
 	block, _ := pem.Decode(SecPub)
 	//x509解码

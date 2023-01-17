@@ -5,9 +5,11 @@ go 1.17
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-redis/redis v6.15.9+incompatible
+	github.com/golang/glog v1.0.0
 	github.com/zeromicro/go-zero v1.4.3
 	google.golang.org/grpc v1.50.1
 	google.golang.org/protobuf v1.28.1
+	gorm.io/driver/mysql v1.4.3
 	gorm.io/gen v0.3.19
 	gorm.io/gorm v1.24.3
 	gorm.io/plugin/dbresolver v1.4.0
@@ -83,7 +85,6 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/datatypes v1.0.7 // indirect
-	gorm.io/driver/mysql v1.4.3 // indirect
 	gorm.io/hints v1.1.0 // indirect
 	k8s.io/api v0.22.9 // indirect
 	k8s.io/apimachinery v0.22.9 // indirect

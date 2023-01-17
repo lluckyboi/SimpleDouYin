@@ -5,6 +5,8 @@ const (
 	RedisUserNameCacheKey = "username"
 	// RedisUserIdCacheKey redis用户id缓存Key
 	RedisUserIdCacheKey = "user_id"
+	// RedisLastTimeStamp 上次生成id时间戳
+	RedisLastTimeStamp = "userid_last_timestamp"
 
 	// LimitKeyPrefix redis限流key前缀
 	LimitKeyPrefix = "periodlimit"
