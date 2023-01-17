@@ -32,7 +32,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.CORSMiddleware, serverCtx.LimitMiddleware},
 			[]rest.Route{
 				{
-					Method:  http.MethodPost,
+					Method:  http.MethodGet,
 					Path:    "/douyin/user",
 					Handler: user_info.GetUserInfoHandler(serverCtx),
 				},
