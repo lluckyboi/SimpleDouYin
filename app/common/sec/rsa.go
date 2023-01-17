@@ -1,4 +1,4 @@
-package common
+package sec
 
 import (
 	"crypto/rand"
@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"encoding/pem"
 	"github.com/zeromicro/go-zero/core/logx"
+	"log"
 	"os"
 )
 
@@ -55,10 +56,10 @@ func GenerateRSAKey(bits int) {
 }
 
 // RSA_Encrypt RSA加密
-func RSA_Encrypt(plainText []byte, OriSecPub []byte, IsBase64 bool) string {
-	//如果被base64编码过，先解码
+func RSA_Encrypt(plainText []byte, OriSecPub []byte, IsSecBase64 bool) string {
+	//如果密钥被base64编码过，先解码
 	SecPub := make([]byte, base64.StdEncoding.DecodedLen(len(OriSecPub)))
-	if IsBase64 {
+	if IsSecBase64 {
 		_, err := base64.StdEncoding.Decode(SecPub, OriSecPub)
 		if err != nil {
 			logx.Error(err)
@@ -87,16 +88,30 @@ func RSA_Encrypt(plainText []byte, OriSecPub []byte, IsBase64 bool) string {
 }
 
 // RSA_Decrypt RSA解密
-func RSA_Decrypt(cipherText []byte, SecPri []byte) []byte {
+func RSA_Decrypt(cipherText []byte, OriSecPri []byte, IsSecBase64 bool) string {
+	//如果密钥被base64编码过，先密钥解码
+	log.Print("ori:", string(OriSecPri))
+	SecPri := make([]byte, base64.StdEncoding.DecodedLen(len(OriSecPri)))
+	if IsSecBase64 {
+		_, err := base64.StdEncoding.Decode(SecPri, OriSecPri)
+		if err != nil {
+			logx.Error(err)
+			return ""
+		}
+	} else {
+		SecPri = OriSecPri
+	}
+
 	//pem解码
 	block, _ := pem.Decode(SecPri)
 	//X509解码
 	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
+		log.Print("RSA_Decrypt panic!")
 		panic(err)
 	}
 	//对密文进行解密
 	plainText, _ := rsa.DecryptPKCS1v15(rand.Reader, privateKey, cipherText)
 	//返回明文
-	return plainText
+	return string(plainText)
 }

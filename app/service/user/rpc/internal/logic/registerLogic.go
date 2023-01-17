@@ -2,12 +2,12 @@ package logic
 
 import (
 	"SimpleDouYin/app/common"
+	"SimpleDouYin/app/common/sec"
 	"SimpleDouYin/app/common/tool"
 	"SimpleDouYin/app/service/user/dao/model"
 	"context"
 	"errors"
 	"github.com/zeromicro/go-zero/core/stores/redis"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -81,11 +81,13 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
 		return regs, nil
 	}
 
-	//logx.Info("开始加密", in, l.svcCtx.Config.Sec.SecPub)
-
-	//RSA 密码公钥加密
-	User.Password = common.RSA_Encrypt([]byte(in.Password), []byte(l.svcCtx.Config.Sec.SecPub), true)
-	log.Print("开始入库")
+	//三重DES加密
+	if User.Password, err = sec.TripleDesEncrypt(in.Password, l.svcCtx.Config.Sec.DESKey, l.svcCtx.Config.Sec.DESIv); err != nil {
+		regs.StatusCode = common.ErrOfServer
+		regs.StatusMsg = common.InfoErrOfServer
+		logx.Error("三重DES加密错误:", cmd.Err())
+		return regs, nil
+	}
 	//入库
 	ds := l.svcCtx.GormDB.Create(&User)
 	if ds.Error != nil {
@@ -94,7 +96,6 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
 		logx.Error("user Register 密码入库错误:", ds.Error)
 		return regs, nil
 	}
-	log.Print("写入缓存")
 	//用户名和id写入缓存
 	l.svcCtx.Redis.SAdd("username", in.Username)
 	l.svcCtx.Redis.SAdd("user_id", User.UserID)

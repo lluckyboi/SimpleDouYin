@@ -2,8 +2,10 @@ package logic
 
 import (
 	"SimpleDouYin/app/common"
+	"SimpleDouYin/app/common/sec"
 	"SimpleDouYin/app/service/user/dao/model"
 	"context"
+	"log"
 	"net/http"
 
 	"SimpleDouYin/app/service/user/rpc/internal/svc"
@@ -36,7 +38,18 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginReps, error) {
 		logx.Error("登录:查询用户名错误:", err)
 		return resp, nil
 	}
-	if common.RSA_Encrypt([]byte(in.Password), []byte(l.svcCtx.Config.Sec.SecPub), true) != user.Password {
+
+	//解密
+	pass, err2 := sec.TripleDesDecrypt(user.Password, l.svcCtx.Config.Sec.DESKey, l.svcCtx.Config.Sec.DESIv)
+	if err2 != nil {
+		resp.StatusCode = common.ErrOfServer
+		resp.StatusMsg = common.InfoErrOfServer
+		logx.Error("登录:base64解码错误:", err2)
+		return resp, nil
+	}
+	//比较
+	if pass != in.Password {
+		log.Print(pass)
 		resp.StatusCode = common.ErrWrongPassword
 		resp.StatusMsg = "密码错误"
 		return resp, nil

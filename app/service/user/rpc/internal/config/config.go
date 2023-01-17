@@ -16,7 +16,7 @@ type Config struct {
 		RPass string
 	}
 	Sec struct {
-		SecPri string
-		SecPub string
+		DESKey string
+		DESIv  string
 	}
 }
