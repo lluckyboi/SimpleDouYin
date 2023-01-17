@@ -82,7 +82,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
 	}
 
 	//RSA 密码公钥加密
-	User.Password = common.RSA_Encrypt([]byte(in.Password), l.svcCtx.Config.Sec.SecPub)
+	User.Password = common.RSA_Encrypt([]byte(in.Password), l.svcCtx.Config.Sec.SecPub, true)
 
 	//入库
 	ds := l.svcCtx.GormDB.Create(&User)

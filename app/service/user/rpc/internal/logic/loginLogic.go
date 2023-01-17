@@ -36,7 +36,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginReps, error) {
 		logx.Error("登录:查询用户名错误:", err)
 		return resp, nil
 	}
-	if common.RSA_Encrypt([]byte(in.Password), l.svcCtx.Config.Sec.SecPub) != user.Password {
+	if common.RSA_Encrypt([]byte(in.Password), l.svcCtx.Config.Sec.SecPub, true) != user.Password {
 		resp.StatusCode = common.ErrWrongPassword
 		resp.StatusMsg = "密码错误"
 		return resp, nil
