@@ -27,6 +27,14 @@ func NewUserLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserLog
 
 func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginResponse, err error) {
 	resp = new(types.LoginResponse)
+	//长度校验
+	if !(common.LengthCheck(req.UserName)) ||
+		!(common.LengthCheck(req.PassWord)) {
+		resp.StatusCode = common.ErrLengthErr
+		resp.StatusMsg = "长度错误"
+		return resp, nil
+	}
+
 	//验证用户名是否存在
 	bl := l.svcCtx.RedisDB.SIsMember(common.RedisUserNameCacheKey, req.UserName)
 	if bl.Val() == false {
@@ -39,7 +47,7 @@ func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginRe
 	//登录
 	rst, err := l.svcCtx.UserClient.Login(l.ctx, &user.LoginReq{
 		Username: req.UserName,
-		Password: req.Password,
+		Password: req.PassWord,
 	})
 	resp.StatusCode = rst.StatusCode
 	resp.StatusMsg = rst.StatusMsg

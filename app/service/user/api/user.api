@@ -1,7 +1,7 @@
 type (
 	RegisterRequest {
-		UserName string `json:"username"`
-		PassWord string `json:"password"`
+		UserName string `json:"username" form:"username"`
+		PassWord string `json:"password" form:"password"`
 	}
 	RegisterResponse {
 		StatusCode int32  `json:"status_code"`
@@ -13,8 +13,8 @@ type (
 
 type (
 	LoginRequest {
-		UserName string `json:"username"`
-		Password string `json:"password"`
+		UserName string `json:"username" form:"username"`
+		PassWord string `json:"password" form:"password"`
 	}
 	LoginResponse {
 		StatusCode int32  `json:"status_code"`
@@ -26,8 +26,8 @@ type (
 
 type (
 	GetUserInfoRequest {
-		UserId int64  `json:"user_id"`
-		Token  string `json:"token"`
+		UserId int64  `json:"user_id" query:"user_id"`
+		Token  string `json:"token" query:"token"`
 	}
 	GetUserInfoResponse {
 		StatusCode int32  `json:"status_code"`

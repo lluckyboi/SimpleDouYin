@@ -27,6 +27,14 @@ func NewUserRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *User
 
 func (l *UserRegisterLogic) UserRegister(req *types.RegisterRequest) (resp *types.RegisterResponse, error error) {
 	resp = new(types.RegisterResponse)
+	//长度校验
+	if !(common.LengthCheck(req.UserName)) ||
+		!(common.LengthCheck(req.PassWord)) {
+		resp.StatusCode = common.ErrLengthErr
+		resp.StatusMsg = "长度错误"
+		return resp, nil
+	}
+
 	//先查询用户名是否已注册
 	bl := l.svcCtx.RedisDB.SIsMember(common.RedisUserNameCacheKey, req.UserName)
 	if bl.Val() == true {
