@@ -4,6 +4,7 @@ import (
 	"SimpleDouYin/app/common"
 	"SimpleDouYin/app/service/user/rpc/user"
 	"context"
+	"log"
 	"strconv"
 
 	"SimpleDouYin/app/service/user/api/internal/svc"
@@ -26,13 +27,14 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 	}
 }
 
-func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *types.GetUserInfoResponse, err error) {
+func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (*types.GetUserInfoResponse, error) {
+	resp := new(types.GetUserInfoResponse)
 	//解析token
 	claims, err := common.ParseToken(req.Token)
 	if err != nil {
 		resp.StatusCode = common.ErrFailParseToken
 		logx.Error(err.Error())
-		return
+		return resp, nil
 	}
 
 	//转换id类型
@@ -40,7 +42,7 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *typ
 	if err != nil {
 		resp.StatusCode = common.ErrOfServer
 		resp.StatusMsg = common.InfoErrOfServer
-		return
+		return resp, nil
 	}
 
 	//查询id是否存在
@@ -48,7 +50,7 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *typ
 	if bl.Val() == false {
 		resp.StatusCode = common.ErrNoSuchUser
 		resp.StatusMsg = "无效的id"
-		return
+		return resp, nil
 	}
 
 	//调用rpc查询
@@ -60,9 +62,9 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *typ
 		resp.StatusCode = common.ErrOfServer
 		resp.StatusMsg = common.InfoErrOfServer
 		logx.Error(err.Error())
-		return
+		return resp, nil
 	}
-
+	log.Print("prc成功")
 	//返回结果
 	resp.StatusCode = GRsp.StatusCode
 	resp.StatusMsg = GRsp.StatusMsg
@@ -73,5 +75,5 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *typ
 		FollowerCount: GRsp.User.FollowerCount,
 		IsFollow:      GRsp.User.IsFollow,
 	}
-	return
+	return resp, nil
 }
