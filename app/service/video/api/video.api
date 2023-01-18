@@ -1,0 +1,9 @@
+syntax = "v1"
+
+info(
+    title: "video服务"
+    author: "luckyboi"
+    version: "v1.0"
+)
+
+type
