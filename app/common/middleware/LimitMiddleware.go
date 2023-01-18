@@ -39,7 +39,7 @@ func (lm *LimitMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		code, err := l.Take(lm.key)
 		if err != nil {
 			logx.Error(err)
-			next(w, r)
+			return
 		}
 		// switch val => process request
 		switch code {
@@ -53,7 +53,7 @@ func (lm *LimitMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		case limit.Allowed:
 			logx.Infof("AllowedQuota key: %v", lm.key)
-			return
+			next(w, r)
 		case limit.HitQuota:
 			logx.Errorf("HitQuota key: %v", lm.key)
 			resp := common.Resp{
@@ -71,6 +71,5 @@ func (lm *LimitMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			httpx.OkJson(w, resp)
 			return
 		}
-		next(w, r)
 	}
 }
