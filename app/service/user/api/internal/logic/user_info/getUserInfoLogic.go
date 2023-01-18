@@ -31,9 +31,10 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *typ
 	claims, err := common.ParseToken(req.Token)
 	if err != nil {
 		resp.StatusCode = common.ErrFailParseToken
-		logx.Error(err)
+		logx.Error(err.Error())
 		return
 	}
+
 	//转换id类型
 	UserId, err := strconv.ParseInt(req.UserId, 10, 64)
 	if err != nil {
@@ -58,13 +59,13 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *typ
 	if err != nil {
 		resp.StatusCode = common.ErrOfServer
 		resp.StatusMsg = common.InfoErrOfServer
-		logx.Error(err)
+		logx.Error(err.Error())
 		return
 	}
 
 	//返回结果
-	resp.StatusCode = GRsp.GetStatusCode()
-	resp.StatusMsg = GRsp.GetStatusMsg()
+	resp.StatusCode = GRsp.StatusCode
+	resp.StatusMsg = GRsp.StatusMsg
 	resp.User = types.User{
 		Id:            UserId,
 		Name:          GRsp.User.Name,

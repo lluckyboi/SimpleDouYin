@@ -43,7 +43,7 @@ func (l *GetInfoLogic) GetInfo(in *pb.GetInfoReq) (*pb.GetInfoReps, error) {
 	}
 
 	//再查询是否关注
-	db = l.svcCtx.GormDB.Where("uid = ? and target_id = ?", in.UserId, in.TargetId).First(&Follow)
+	db = l.svcCtx.GormDB.Where("uid = ? and target_uid = ?", in.UserId, in.TargetId).First(&Follow)
 	if db.Error != nil {
 		if errors.Is(db.Error, gorm.ErrRecordNotFound) {
 			isf = false
