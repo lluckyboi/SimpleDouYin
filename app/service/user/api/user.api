@@ -45,6 +45,7 @@ type (
 
 @server (
 	group: login_register
+	middleware:	CORSMiddleware,LimitMiddleware
 )
 service User {
 	@doc "用户注册"
