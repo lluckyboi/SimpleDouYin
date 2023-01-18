@@ -12,4 +12,6 @@ const (
 	LimitKeyPrefix = "periodlimit"
 	// LimitKeyUserApi redis限流key user的api服务
 	LimitKeyUserApi = "user_api"
+	// LimitKeyVideoApi redis限流key video的api服务
+	LimitKeyVideoApi = "video_api"
 )
