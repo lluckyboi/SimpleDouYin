@@ -1,8 +1,8 @@
 package logic
 
 import (
-	"SimpleDouYin/app/common"
 	"SimpleDouYin/app/common/sec"
+	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/service/user/dao/model"
 	"context"
 	"log"
@@ -33,8 +33,8 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginReps, error) {
 	user := model.User{}
 	err := l.svcCtx.GormDB.Where("username = ?", in.Username).First(&user)
 	if err.Error != nil {
-		resp.StatusCode = common.ErrOfServer
-		resp.StatusMsg = common.InfoErrOfServer
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = status.InfoErrOfServer
 		logx.Error("登录:查询用户名错误:", err)
 		return resp, nil
 	}
@@ -42,15 +42,15 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginReps, error) {
 	//解密
 	pass, err2 := sec.TripleDesDecrypt(user.Password, l.svcCtx.Config.Sec.DESKey, l.svcCtx.Config.Sec.DESIv)
 	if err2 != nil {
-		resp.StatusCode = common.ErrOfServer
-		resp.StatusMsg = common.InfoErrOfServer
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = status.InfoErrOfServer
 		logx.Error("登录:base64解码错误:", err2)
 		return resp, nil
 	}
 	//比较
 	if pass != in.Password {
 		log.Print(pass)
-		resp.StatusCode = common.ErrWrongPassword
+		resp.StatusCode = status.ErrWrongPassword
 		resp.StatusMsg = "密码错误"
 		return resp, nil
 	}

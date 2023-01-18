@@ -1,4 +1,4 @@
-package common
+package key
 
 const (
 	// RedisUserNameCacheKey redis用户名缓存Key

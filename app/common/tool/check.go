@@ -1,4 +1,4 @@
-package common
+package tool
 
 func LengthCheck(ss string) bool {
 	if len(ss) > 32 || len(ss) < 2 {

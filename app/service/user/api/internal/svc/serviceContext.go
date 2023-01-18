@@ -1,7 +1,8 @@
 package svc
 
 import (
-	"SimpleDouYin/app/common"
+	"SimpleDouYin/app/common/jwt"
+	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/middleware"
 	"SimpleDouYin/app/service/user/api/internal/config"
 	"SimpleDouYin/app/service/user/rpc/user"
@@ -17,18 +18,18 @@ type ServiceContext struct {
 	CORSMiddleware  rest.Middleware
 	LimitMiddleware rest.Middleware
 
-	JWTMap     *common.JWTMap
+	JWTMap     *jwt.JWTMap
 	UserClient user.User
 	RedisDB    *redis.Client
 }
 
-func NewServiceContext(c config.Config, JWTMap *common.JWTMap) *ServiceContext {
+func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
 	return &ServiceContext{
 		Config:          c,
 		UserClient:      user.NewUser(zrpc.MustNewClient(c.UserClient)),
 		JWTMap:          JWTMap,
 		CORSMiddleware:  middleware.NewCORSMiddleware().Handle,
-		LimitMiddleware: middleware.NewLimitMiddleware(common.LimitKeyUserApi).Handle,
+		LimitMiddleware: middleware.NewLimitMiddleware(key.LimitKeyUserApi, c.LimitKey.Seconds, c.LimitKey.Quota).Handle,
 		RedisDB: redis.NewClient(&redis.Options{
 			Addr:     c.RedisDB.RHost,
 			Password: c.RedisDB.RPass,

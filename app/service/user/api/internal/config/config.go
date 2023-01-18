@@ -12,4 +12,10 @@ type Config struct {
 		RHost string
 		RPass string
 	}
+	LimitKey struct {
+		//窗口大小
+		Seconds int
+		//请求上限
+		Quota int
+	}
 }

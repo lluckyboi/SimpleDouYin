@@ -1,7 +1,10 @@
 package login_register
 
 import (
-	"SimpleDouYin/app/common"
+	"SimpleDouYin/app/common/jwt"
+	"SimpleDouYin/app/common/key"
+	"SimpleDouYin/app/common/status"
+	"SimpleDouYin/app/common/tool"
 	"SimpleDouYin/app/service/user/api/internal/svc"
 	"SimpleDouYin/app/service/user/api/internal/types"
 	"SimpleDouYin/app/service/user/dao/model"
@@ -28,18 +31,18 @@ func NewUserRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *User
 func (l *UserRegisterLogic) UserRegister(req *types.RegisterRequest) (resp *types.RegisterResponse, error error) {
 	resp = new(types.RegisterResponse)
 	//长度校验
-	if !(common.LengthCheck(req.UserName)) ||
-		!(common.LengthCheck(req.PassWord)) {
-		resp.StatusCode = common.ErrLengthErr
+	if !(tool.LengthCheck(req.UserName)) ||
+		!(tool.LengthCheck(req.PassWord)) {
+		resp.StatusCode = status.ErrLengthErr
 		resp.StatusMsg = "长度错误"
 		return resp, nil
 	}
 
 	//先查询用户名是否已注册
-	bl := l.svcCtx.RedisDB.SIsMember(common.RedisUserNameCacheKey, req.UserName)
+	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserNameCacheKey, req.UserName)
 	if bl.Val() == true {
 		resp.StatusMsg = "用户名已存在"
-		resp.StatusCode = common.ErrAlreadyHaveUser
+		resp.StatusCode = status.ErrAlreadyHaveUser
 		return resp, nil
 	}
 	//调rpc入库
@@ -54,10 +57,10 @@ func (l *UserRegisterLogic) UserRegister(req *types.RegisterRequest) (resp *type
 
 	//生成token
 	user := model.User{UserID: RgRes.UserId}
-	token, err := common.GenAccessToken(user)
+	token, err := jwt.GenAccessToken(user)
 	if err != nil {
-		resp.StatusCode = common.ErrOfServer
-		resp.StatusMsg = common.InfoErrOfServer
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = status.InfoErrOfServer
 		logx.Error("生成token错误：", err)
 		return
 	}

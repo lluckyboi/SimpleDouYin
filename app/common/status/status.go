@@ -1,4 +1,4 @@
-package common
+package status
 
 const (
 	ErrOfServer        = 500  //服务器错误

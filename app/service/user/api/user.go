@@ -1,7 +1,7 @@
 package main
 
 import (
-	"SimpleDouYin/app/common"
+	"SimpleDouYin/app/common/jwt"
 	"flag"
 	"fmt"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -31,7 +31,7 @@ func main() {
 	defer server.Stop()
 
 	//初始化JWTMap
-	JWTMap := common.JWTMap{Keys: make(map[string]interface{})}
+	JWTMap := jwt.JWTMap{Keys: make(map[string]interface{})}
 
 	ctx := svc.NewServiceContext(c, &JWTMap)
 	handler.RegisterHandlers(server, ctx)

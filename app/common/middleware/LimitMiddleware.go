@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"SimpleDouYin/app/common"
+	"SimpleDouYin/app/common/key"
+	"SimpleDouYin/app/common/status"
 	"github.com/zeromicro/go-zero/core/limit"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -9,19 +11,14 @@ import (
 	"net/http"
 )
 
-const (
-	// Seconds 窗口大小
-	Seconds = 1
-	// Quota 请求上限
-	Quota = 100
-)
-
 type LimitMiddleware struct {
-	key string
+	key     string
+	Seconds int
+	Quota   int
 }
 
-func NewLimitMiddleware(key string) *LimitMiddleware {
-	return &LimitMiddleware{key: key}
+func NewLimitMiddleware(key string, seconds, quota int) *LimitMiddleware {
+	return &LimitMiddleware{key: key, Seconds: seconds, Quota: quota}
 }
 
 // OPTION模式设置密码
@@ -31,7 +28,7 @@ func op(r *redis.Redis) {
 
 func (lm *LimitMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		l := limit.NewPeriodLimit(Seconds, Quota, redis.New(common.RedisAddr, op), common.LimitKeyPrefix)
+		l := limit.NewPeriodLimit(lm.Seconds, lm.Quota, redis.New(common.RedisAddr, op), key.LimitKeyPrefix)
 		// 0：表示错误，比如可能是redis故障、过载
 		// 1：允许
 		// 2：允许但是当前窗口内已到达上限
@@ -45,8 +42,8 @@ func (lm *LimitMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		switch code {
 		case limit.OverQuota:
 			logx.Errorf("OverQuota key: %v", lm.key)
-			resp := common.Resp{
-				Status: common.ErrRejectedRequest,
+			resp := status.Resp{
+				Status: status.ErrRejectedRequest,
 				Info:   "请求被拒绝，请稍后再试",
 			}
 			httpx.OkJson(w, resp)
@@ -56,16 +53,16 @@ func (lm *LimitMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			next(w, r)
 		case limit.HitQuota:
 			logx.Errorf("HitQuota key: %v", lm.key)
-			resp := common.Resp{
-				Status: common.ErrLimitedRequest,
+			resp := status.Resp{
+				Status: status.ErrLimitedRequest,
 				Info:   "请求被限流，请稍后再试",
 			}
 			httpx.OkJson(w, resp)
 			return
 		default:
 			logx.Errorf("DefaultQuota key: %v", lm.key)
-			resp := common.Resp{
-				Status: common.ErrOfServer,
+			resp := status.Resp{
+				Status: status.ErrOfServer,
 				Info:   "服务器错误",
 			}
 			httpx.OkJson(w, resp)

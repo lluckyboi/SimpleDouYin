@@ -1,7 +1,9 @@
 package user_info
 
 import (
-	"SimpleDouYin/app/common"
+	"SimpleDouYin/app/common/jwt"
+	"SimpleDouYin/app/common/key"
+	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/service/user/rpc/user"
 	"context"
 	"log"
@@ -30,9 +32,9 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (*types.GetUserInfoResponse, error) {
 	resp := new(types.GetUserInfoResponse)
 	//解析token
-	claims, err := common.ParseToken(req.Token)
+	claims, err := jwt.ParseToken(req.Token)
 	if err != nil {
-		resp.StatusCode = common.ErrFailParseToken
+		resp.StatusCode = status.ErrFailParseToken
 		logx.Error(err.Error())
 		return resp, nil
 	}
@@ -40,15 +42,15 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (*types.Ge
 	//转换id类型
 	UserId, err := strconv.ParseInt(req.UserId, 10, 64)
 	if err != nil {
-		resp.StatusCode = common.ErrOfServer
-		resp.StatusMsg = common.InfoErrOfServer
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = status.InfoErrOfServer
 		return resp, nil
 	}
 
 	//查询id是否存在
-	bl := l.svcCtx.RedisDB.SIsMember(common.RedisUserIdCacheKey, UserId)
+	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserIdCacheKey, UserId)
 	if bl.Val() == false {
-		resp.StatusCode = common.ErrNoSuchUser
+		resp.StatusCode = status.ErrNoSuchUser
 		resp.StatusMsg = "无效的id"
 		return resp, nil
 	}
@@ -59,8 +61,8 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (*types.Ge
 		TargetId: UserId,
 	})
 	if err != nil {
-		resp.StatusCode = common.ErrOfServer
-		resp.StatusMsg = common.InfoErrOfServer
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = status.InfoErrOfServer
 		logx.Error(err.Error())
 		return resp, nil
 	}

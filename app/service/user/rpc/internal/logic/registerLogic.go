@@ -1,8 +1,10 @@
 package logic
 
 import (
-	"SimpleDouYin/app/common"
+	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/sec"
+	"SimpleDouYin/app/common/snowFlake"
+	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/common/tool"
 	"SimpleDouYin/app/service/user/dao/model"
 	"context"
@@ -41,7 +43,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
 	}
 
 	//雪花算法生成id
-	sk, err := common.NewSnowflake(1, 1)
+	sk, err := snowFlake.NewSnowflake(1, 1)
 	if err != nil {
 		logx.Error(err)
 		return regs, nil
@@ -53,38 +55,38 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
 	if cmd.Err() == nil {
 		//正常，开始比较
 		//redis结果处理
-		_, val, _ := strings.Cut(l.svcCtx.Redis.Get(common.RedisLastTimeStamp).String(), tool.RedisStrBuilder(common.RedisLastTimeStamp))
+		_, val, _ := strings.Cut(l.svcCtx.Redis.Get(key.RedisLastTimeStamp).String(), tool.RedisStrBuilder(key.RedisLastTimeStamp))
 		logx.Info(val)
 		//解析
 		lastTP, err := strconv.ParseInt(val, 10, 64)
 		if err != nil {
-			regs.StatusCode = common.ErrOfServer
-			regs.StatusMsg = common.InfoErrOfServer
+			regs.StatusCode = status.ErrOfServer
+			regs.StatusMsg = status.InfoErrOfServer
 			logx.Error("时间戳解析错误：", err)
 			return regs, nil
 		}
 		if lastTP >= User.UserID {
-			regs.StatusCode = common.ErrOfServer
-			regs.StatusMsg = common.InfoErrOfServer
+			regs.StatusCode = status.ErrOfServer
+			regs.StatusMsg = status.InfoErrOfServer
 			logx.Error("可能出现时钟回拨")
 			return regs, nil
 		} else {
-			l.svcCtx.Redis.Set("userid_last_timestamp", strconv.FormatInt(common.GetTimestamp(User.UserID), 10), 0)
+			l.svcCtx.Redis.Set("userid_last_timestamp", strconv.FormatInt(snowFlake.GetTimestamp(User.UserID), 10), 0)
 		}
 	} else if errors.Is(redis.Nil, cmd.Err()) {
 		//如果是第一次写入，不用比较
-		l.svcCtx.Redis.Set("userid_last_timestamp", strconv.FormatInt(common.GetTimestamp(User.UserID), 10), 0)
+		l.svcCtx.Redis.Set("userid_last_timestamp", strconv.FormatInt(snowFlake.GetTimestamp(User.UserID), 10), 0)
 	} else { //报错了
-		regs.StatusCode = common.ErrOfServer
-		regs.StatusMsg = common.InfoErrOfServer
+		regs.StatusCode = status.ErrOfServer
+		regs.StatusMsg = status.InfoErrOfServer
 		logx.Error("获取时间戳错误:", cmd.Err())
 		return regs, nil
 	}
 
 	//三重DES加密
 	if User.Password, err = sec.TripleDesEncrypt(in.Password, l.svcCtx.Config.Sec.DESKey, l.svcCtx.Config.Sec.DESIv); err != nil {
-		regs.StatusCode = common.ErrOfServer
-		regs.StatusMsg = common.InfoErrOfServer
+		regs.StatusCode = status.ErrOfServer
+		regs.StatusMsg = status.InfoErrOfServer
 		logx.Error("三重DES加密错误:", cmd.Err())
 		return regs, nil
 	}
@@ -92,7 +94,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
 	ds := l.svcCtx.GormDB.Create(&User)
 	if ds.Error != nil {
 		regs.StatusMsg = "服务器错误"
-		regs.StatusCode = common.ErrOfServer
+		regs.StatusCode = status.ErrOfServer
 		logx.Error("user Register 密码入库错误:", ds.Error)
 		return regs, nil
 	}

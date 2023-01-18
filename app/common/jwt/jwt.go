@@ -1,4 +1,4 @@
-package common
+package jwt
 
 import (
 	"SimpleDouYin/app/service/user/dao/model"

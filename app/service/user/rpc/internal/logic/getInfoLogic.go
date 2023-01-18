@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"SimpleDouYin/app/common"
+	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/service/user/dao/model"
 	"context"
 	"errors"
@@ -37,8 +37,8 @@ func (l *GetInfoLogic) GetInfo(in *pb.GetInfoReq) (*pb.GetInfoReps, error) {
 	//先查询目标id信息
 	db := l.svcCtx.GormDB.Where("user_id = ?", in.TargetId).First(&User)
 	if db.Error != nil {
-		resp.StatusCode = common.ErrOfServer
-		resp.StatusMsg = common.InfoErrOfServer
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = status.InfoErrOfServer
 		return resp, nil
 	}
 
@@ -48,8 +48,8 @@ func (l *GetInfoLogic) GetInfo(in *pb.GetInfoReq) (*pb.GetInfoReps, error) {
 		if errors.Is(db.Error, gorm.ErrRecordNotFound) {
 			isf = false
 		} else {
-			resp.StatusCode = common.ErrOfServer
-			resp.StatusMsg = common.InfoErrOfServer
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = status.InfoErrOfServer
 			return resp, nil
 		}
 	}
