@@ -50,10 +50,10 @@ func (lm *LimitMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 				Info:   "请求被拒绝，请稍后再试",
 			}
 			httpx.OkJson(w, resp)
-			next(w, r)
+			return
 		case limit.Allowed:
 			logx.Infof("AllowedQuota key: %v", lm.key)
-			next(w, r)
+			return
 		case limit.HitQuota:
 			logx.Errorf("HitQuota key: %v", lm.key)
 			resp := common.Resp{
@@ -61,7 +61,7 @@ func (lm *LimitMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 				Info:   "请求被限流，请稍后再试",
 			}
 			httpx.OkJson(w, resp)
-			next(w, r)
+			return
 		default:
 			logx.Errorf("DefaultQuota key: %v", lm.key)
 			resp := common.Resp{
@@ -69,7 +69,7 @@ func (lm *LimitMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 				Info:   "服务器错误",
 			}
 			httpx.OkJson(w, resp)
-			next(w, r)
+			return
 		}
 		next(w, r)
 	}
