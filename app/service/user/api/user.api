@@ -26,7 +26,7 @@ type (
 
 type (
 	GetUserInfoRequest {
-		UserId int64  `form:"user_id"`
+		UserId string `form:"user_id"`
 		Token  string `form:"token"`
 	}
 	GetUserInfoResponse {

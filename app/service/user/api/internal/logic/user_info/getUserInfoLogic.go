@@ -4,6 +4,7 @@ import (
 	"SimpleDouYin/app/common"
 	"SimpleDouYin/app/service/user/rpc/user"
 	"context"
+	"strconv"
 
 	"SimpleDouYin/app/service/user/api/internal/svc"
 	"SimpleDouYin/app/service/user/api/internal/types"
@@ -33,9 +34,16 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *typ
 		logx.Error(err)
 		return
 	}
+	//转换id类型
+	UserId, err := strconv.ParseInt(req.UserId, 10, 64)
+	if err != nil {
+		resp.StatusCode = common.ErrOfServer
+		resp.StatusMsg = common.InfoErrOfServer
+		return
+	}
 
 	//查询id是否存在
-	bl := l.svcCtx.RedisDB.SIsMember(common.RedisUserIdCacheKey, req.UserId)
+	bl := l.svcCtx.RedisDB.SIsMember(common.RedisUserIdCacheKey, UserId)
 	if bl.Val() == false {
 		resp.StatusCode = common.ErrNoSuchUser
 		resp.StatusMsg = "无效的id"
@@ -45,7 +53,7 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *typ
 	//调用rpc查询
 	GRsp, err := l.svcCtx.UserClient.GetInfo(l.ctx, &user.GetInfoReq{
 		UserId:   claims.UserId,
-		TargetId: req.UserId,
+		TargetId: UserId,
 	})
 	if err != nil {
 		resp.StatusCode = common.ErrOfServer
@@ -58,7 +66,7 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (resp *typ
 	resp.StatusCode = GRsp.GetStatusCode()
 	resp.StatusMsg = GRsp.GetStatusMsg()
 	resp.User = types.User{
-		Id:            req.UserId,
+		Id:            UserId,
 		Name:          GRsp.User.Name,
 		FollowCount:   GRsp.User.FollowerCount,
 		FollowerCount: GRsp.User.FollowerCount,

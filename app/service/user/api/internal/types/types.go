@@ -26,7 +26,7 @@ type LoginResponse struct {
 }
 
 type GetUserInfoRequest struct {
-	UserId int64  `form:"user_id"`
+	UserId string `form:"user_id"`
 	Token  string `form:"token"`
 }
 
