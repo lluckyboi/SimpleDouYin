@@ -1,0 +1,58 @@
+syntax = "proto3";
+package video;
+option go_package = "./pb";
+
+//视频流
+message FeedReq{
+  string LastTime = 1;
+}
+message FeedResp{
+  string StatusCode = 1;
+  string StatusMsg = 2;
+  string NextTime = 3;
+  repeated Video VideoList = 4;
+}
+message Video{
+  int64 Id = 1;
+  Author Author = 2;
+  string PlayUrl = 3;
+  string CoverUrl = 4;
+  int64 FavoriteCount = 5;
+  int64 CommentCount = 6;
+  bool IsFavorite = 7;
+  string Title = 8;
+}
+message Author{
+  int64 Id = 1;
+  string Name = 2;
+  int64 FollowCount = 3;
+  int64 FollowerCount = 4;
+  bool IsFollow = 5;
+}
+
+//投稿
+message PublishReq{
+  int64 UserId = 1;
+  string Title = 2;
+  string VideoUrl = 3;
+}
+message PublishResp{
+  string StatusCode = 1;
+  string StatusMsg = 2;
+}
+
+//发布列表
+message PublishListReq{
+  int64 UserId = 1;
+}
+message PublishListResp{
+  string StatusCode = 1;
+  string StatusMsg = 2;
+  repeated Video VideoList = 3;
+}
+
+service VideoService{
+  rpc Feed(FeedReq) returns(FeedResp);
+  rpc Publish(PublishReq) returns(PublishResp);
+  rpc PublishList(PublishListReq)returns(PublishListResp);
+}
