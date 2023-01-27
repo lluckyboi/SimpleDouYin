@@ -20,7 +20,7 @@ type FeedResponse struct {
 	StatusCode string  `json:"status_code"`
 	StatusMsg  string  `json:"status_msg"`
 	NextTime   string  `json:"next_time"`
-	VideoList  []Video `json:"video_list"`
+	VideoList  []video `json:"video_list"`
 }
 
 type Video struct {
@@ -43,12 +43,12 @@ type Author struct {
 }
 
 type PublishListRequest struct {
-	Token     string  `form:"token"`
-	UserId    string  `form:"user_id"`
-	VedioList []Video `json:"video_list"`
+	Token  string `form:"token"`
+	UserId string `form:"user_id"`
 }
 
 type PublishListResponse struct {
-	StatusCode string `json:"status_code"`
-	StatusMsg  string `json:"status_msg"`
+	StatusCode string  `json:"status_code"`
+	StatusMsg  string  `json:"status_msg"`
+	VideoList  []video `json:"video_list"`
 }

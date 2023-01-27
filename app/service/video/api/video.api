@@ -52,13 +52,13 @@ type (
 //发布列表
 type (
 	PublishListRequest {
-		Token     string  `form:"token"`
-		UserId    string  `form:"user_id"`
-		VedioList []video `json:"video_list"`
+		Token  string `form:"token"`
+		UserId string `form:"user_id"`
 	}
 	PublishListResponse {
-		StatusCode string `json:"status_code"`
-		StatusMsg  string `json:"status_msg"`
+		StatusCode string  `json:"status_code"`
+		StatusMsg  string  `json:"status_msg"`
+		VideoList  []video `json:"video_list"`
 	}
 )
 
