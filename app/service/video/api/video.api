@@ -28,9 +28,9 @@ type (
 		StatusCode string  `json:"status_code"`
 		StatusMsg  string  `json:"status_msg"`
 		NextTime   string  `json:"next_time"`
-		VedioList  []vedio `json:"video_list"`
+		VideoList  []video `json:"video_list"`
 	}
-	vedio {
+	video {
 		Id            int64  `json:"id"`
 		Author        Author `json:"author"`
 		PlayUrl       string `json:"play_url"`
@@ -54,7 +54,7 @@ type (
 	PublishListRequest {
 		Token     string  `form:"token"`
 		UserId    string  `form:"user_id"`
-		VedioList []vedio `json:"video_list"`
+		VedioList []video `json:"video_list"`
 	}
 	PublishListResponse {
 		StatusCode string `json:"status_code"`
