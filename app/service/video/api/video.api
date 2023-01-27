@@ -1,9 +1,81 @@
 syntax = "v1"
 
 info(
-    title: "video服务"
-    author: "luckyboi"
-    version: "v1.0"
+	title: "video服务"
+	author: "luckyboi"
+	version: "v1.0"
 )
 
-type
+//投稿
+type (
+	PublishRequest {
+		Token string `json:"token"`
+		Title string `json:"title"`
+	}
+	PublishResponse {
+		StatusCode string `json:"status_code"`
+		StatusMsg  string `json:"status_msg"`
+	}
+)
+
+//视频流
+type (
+	FeedRequest {
+		LastTime string `form:"latest_time,optional"`
+		Token    string `form:"token,optional"`
+	}
+	FeedResponse {
+		StatusCode string  `json:"status_code"`
+		StatusMsg  string  `json:"status_msg"`
+		NextTime   string  `json:"next_time"`
+		VedioList  []vedio `json:"video_list"`
+	}
+	vedio {
+		Id            int64  `json:"id"`
+		Author        Author `json:"author"`
+		PlayUrl       string `json:"play_url"`
+		CoverUrl      string `json:"cover_url"`
+		FavoriteCount int64  `json:"favorite_count"`
+		CommentCount  int64  `json:"comment_count"`
+		IsFavorite    bool   `json:"is_favorite"`
+		Title         string `json:"title"`
+	}
+	Author {
+		Id            int64  `json:"id"`
+		Name          string `json:"name"`
+		FollowCount   int64  `json:"follow_count"`
+		FollowerCount int64  `json:"follower_count"`
+		IsFollow      bool   `json:"is_follow"`
+	}
+)
+
+//发布列表
+type (
+	PublishListRequest {
+		Token     string  `form:"token"`
+		UserId    string  `form:"user_id"`
+		VedioList []vedio `json:"video_list"`
+	}
+	PublishListResponse {
+		StatusCode string `json:"status_code"`
+		StatusMsg  string `json:"status_msg"`
+	}
+)
+
+@server (
+	group: video
+	middleware: CORSMiddleware,LimitMiddleware
+)
+service Video{
+	@doc "feed视频流"
+	@handler Feed
+	get /douyin/feed(FeedRequest) returns (FeedResponse)
+	
+	@doc "投稿"
+	@handler Publish
+	post /douyin/publish/action(PublishRequest) returns (PublishResponse)
+	
+	@doc "发布列表"
+	@handler PublishList
+	get /douyin/publish/list(PublishListRequest) returns (PublishListResponse)
+}
