@@ -14,4 +14,6 @@ const (
 	LimitKeyUserApi = "user_api"
 	// LimitKeyVideoApi redis限流key video的api服务
 	LimitKeyVideoApi = "video_api"
+	// MAXBytes video服务限制文件最大为50M
+	MAXBytes = 50 * 1024 * 1024
 )
