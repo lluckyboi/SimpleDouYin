@@ -5,7 +5,7 @@ import (
 	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/middleware"
 	"SimpleDouYin/app/service/video/api/internal/config"
-	"SimpleDouYin/app/service/video/rpc/video"
+	"SimpleDouYin/app/service/video/rpc/videosv"
 	"github.com/go-redis/redis"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -23,7 +23,7 @@ type ServiceContext struct {
 	LimitMiddleware rest.Middleware
 
 	JWTMap      *jwt.JWTMap
-	VideoClient video.Video
+	VideoClient videosv.VideoSv
 	RedisDB     *redis.Client
 	GormDB      *gorm.DB
 	Minio       *minio.Client
@@ -53,7 +53,7 @@ func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
 		Config:      c,
 		JWTMap:      JWTMap,
 		Minio:       MinioClient,
-		VideoClient: video.NewVideo(zrpc.MustNewClient(c.VideoClient)),
+		VideoClient: videosv.NewVideoSv(zrpc.MustNewClient(c.VideoClient)),
 		GormDB:      db,
 		RedisDB: redis.NewClient(&redis.Options{
 			Addr:     c.RedisDB.RHost,
