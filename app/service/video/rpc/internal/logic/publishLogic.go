@@ -1,7 +1,11 @@
 package logic
 
 import (
+	"SimpleDouYin/app/common/status"
+	"SimpleDouYin/app/service/video/dao/model"
 	"context"
+	"net/http"
+	"time"
 
 	"SimpleDouYin/app/service/video/rpc/internal/svc"
 	"SimpleDouYin/app/service/video/rpc/pb"
@@ -24,7 +28,57 @@ func NewPublishLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PublishLo
 }
 
 func (l *PublishLogic) Publish(in *pb.PublishReq) (*pb.PublishResp, error) {
-	// todo: add your logic here and delete this line
+	resp := new(pb.PublishResp)
 
-	return &pb.PublishResp{}, nil
+	//时区加载
+	tz, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		logx.Info(err)
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = status.InfoErrOfServer
+		return resp, nil
+	}
+
+	t, err := time.Parse(time.RFC3339, time.Now().In(tz).Format(time.RFC3339))
+	if err != nil {
+		logx.Info(err)
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = status.InfoErrOfServer
+		return resp, nil
+	}
+
+	publish := &model.Publish{
+		PublishTime: t,
+		Title:       in.Title,
+		UserID:      in.UserId,
+		VideoID:     in.VideoId,
+	}
+	video := &model.Video{
+		VideoID:  in.VideoId,
+		PlayURL:  in.CoverUrl,
+		CoverURL: in.CoverUrl,
+		Hash:     in.Hash,
+	}
+
+	//开始事务
+	tx := l.svcCtx.GormDB.Begin()
+	if err := tx.Create(&publish).Error; err != nil {
+		tx.Rollback()
+		logx.Info(err)
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = status.InfoErrOfServer
+		return resp, nil
+	}
+	if err := tx.Create(&video).Error; err != nil {
+		tx.Rollback()
+		logx.Info(err)
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = status.InfoErrOfServer
+		return resp, nil
+	}
+	tx.Commit()
+
+	resp.StatusCode = http.StatusOK
+	resp.StatusMsg = "上传视频成功"
+	return resp, nil
 }

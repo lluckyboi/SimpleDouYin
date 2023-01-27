@@ -36,7 +36,7 @@ message PublishReq{
   string Title = 2;
   string VideoUrl = 3;
   int64 VideoId =4;
-  string hash  =5;
+  string Hash  =5;
   string CoverUrl = 6;
 }
 message PublishResp{
