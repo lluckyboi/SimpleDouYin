@@ -13,6 +13,7 @@ type Video struct {
 	CoverURL      string `gorm:"column:cover_url;not null" json:"cover_url"`           // 封面地址
 	FavoriteCount int64  `gorm:"column:favorite_count;not null" json:"favorite_count"` // 点赞数
 	CommentCount  int64  `gorm:"column:comment_count;not null" json:"comment_count"`   // 评论数
+	Hash          string `gorm:"column:hash;not null" json:"hash"`                     // 哈希值
 }
 
 // TableName Video's table name

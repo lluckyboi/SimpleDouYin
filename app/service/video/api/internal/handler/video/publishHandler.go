@@ -1,12 +1,12 @@
 package video
 
 import (
-	"net/http"
-
+	"SimpleDouYin/app/service/video/api/helper"
 	"SimpleDouYin/app/service/video/api/internal/logic/video"
 	"SimpleDouYin/app/service/video/api/internal/svc"
 	"SimpleDouYin/app/service/video/api/internal/types"
 	"github.com/zeromicro/go-zero/rest/httpx"
+	"net/http"
 )
 
 func PublishHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
@@ -16,6 +16,9 @@ func PublishHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
+
+		//上传到minio
+		helper.MinioUpload(r, svcCtx, w, &req)
 
 		l := video.NewPublishLogic(r.Context(), svcCtx)
 		resp, err := l.Publish(&req)

@@ -9,8 +9,11 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 type ServiceContext struct {
@@ -22,6 +25,7 @@ type ServiceContext struct {
 	JWTMap      *jwt.JWTMap
 	VideoClient video.Video
 	RedisDB     *redis.Client
+	GormDB      *gorm.DB
 	Minio       *minio.Client
 }
 
@@ -32,13 +36,17 @@ func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
 	} else {
 		ssl = false
 	}
-
 	MinioClient, err := minio.New(c.Minio.EndPoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(c.Minio.AcKey, c.Minio.Sec, ""),
 		Secure: ssl,
 	})
 	if err != nil {
-		panic("连接至minio错误")
+		logx.Info("连接至minio错误")
+	}
+
+	db, err := gorm.Open(mysql.Open(c.DB.DataSource), &gorm.Config{})
+	if err != nil {
+		logx.Info("连接至mysql错误")
 	}
 
 	return &ServiceContext{
@@ -46,6 +54,7 @@ func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
 		JWTMap:      JWTMap,
 		Minio:       MinioClient,
 		VideoClient: video.NewVideo(zrpc.MustNewClient(c.VideoClient)),
+		GormDB:      db,
 		RedisDB: redis.NewClient(&redis.Options{
 			Addr:     c.RedisDB.RHost,
 			Password: c.RedisDB.RPass,

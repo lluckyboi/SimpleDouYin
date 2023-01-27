@@ -30,4 +30,7 @@ type Config struct {
 		//服务需要用到的桶
 		Buckets []string
 	}
+	DB struct {
+		DataSource string
+	}
 }

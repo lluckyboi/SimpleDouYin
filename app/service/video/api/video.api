@@ -9,8 +9,12 @@ info(
 //投稿
 type (
 	PublishRequest {
-		Token string `json:"token"`
-		Title string `json:"title"`
+		Token    string `json:"token"`
+		Title    string `json:"title"`
+		ID       int64  `json:"id,optional"`
+		PlayUrl  string `json:"play_url,optional"`
+		CoverUrl string `json:"cover_url,optional"`
+		Hash     string `json:"hash,optional"`
 	}
 	PublishResponse {
 		StatusCode string `json:"status_code"`

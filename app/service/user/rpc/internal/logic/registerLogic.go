@@ -55,7 +55,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
 	if cmd.Err() == nil {
 		//正常，开始比较
 		//redis结果处理
-		_, val, _ := strings.Cut(l.svcCtx.Redis.Get(key.RedisLastTimeStamp).String(), tool.RedisStrBuilder(key.RedisLastTimeStamp))
+		_, val, _ := strings.Cut(l.svcCtx.Redis.Get(key.RedisUserIDLastTimeStamp).String(), tool.RedisStrBuilder(key.RedisUserIDLastTimeStamp))
 		logx.Info(val)
 		//解析
 		lastTP, err := strconv.ParseInt(val, 10, 64)
@@ -71,11 +71,11 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
 			logx.Error("可能出现时钟回拨")
 			return regs, nil
 		} else {
-			l.svcCtx.Redis.Set("userid_last_timestamp", strconv.FormatInt(snowFlake.GetTimestamp(User.UserID), 10), 0)
+			l.svcCtx.Redis.Set(key.RedisUserIDLastTimeStamp, strconv.FormatInt(snowFlake.GetTimestamp(User.UserID), 10), 0)
 		}
 	} else if errors.Is(redis.Nil, cmd.Err()) {
 		//如果是第一次写入，不用比较
-		l.svcCtx.Redis.Set("userid_last_timestamp", strconv.FormatInt(snowFlake.GetTimestamp(User.UserID), 10), 0)
+		l.svcCtx.Redis.Set(key.RedisUserIDLastTimeStamp, strconv.FormatInt(snowFlake.GetTimestamp(User.UserID), 10), 0)
 	} else { //报错了
 		regs.StatusCode = status.ErrOfServer
 		regs.StatusMsg = status.InfoErrOfServer

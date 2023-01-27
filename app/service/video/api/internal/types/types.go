@@ -2,8 +2,12 @@
 package types
 
 type PublishRequest struct {
-	Token string `json:"token"`
-	Title string `json:"title"`
+	Token    string `json:"token"`
+	Title    string `json:"title"`
+	ID       int64  `json:"id,optional"`
+	PlayUrl  string `json:"play_url,optional"`
+	CoverUrl string `json:"cover_url,optional"`
+	Hash     string `json:"hash,optional"`
 }
 
 type PublishResponse struct {

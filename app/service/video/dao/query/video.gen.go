@@ -32,6 +32,7 @@ func newVideo(db *gorm.DB) video {
 	_video.CoverURL = field.NewString(tableName, "cover_url")
 	_video.FavoriteCount = field.NewInt64(tableName, "favorite_count")
 	_video.CommentCount = field.NewInt64(tableName, "comment_count")
+	_video.Hash = field.NewString(tableName, "hash")
 
 	_video.fillFieldMap()
 
@@ -47,6 +48,7 @@ type video struct {
 	CoverURL      field.String // 封面地址
 	FavoriteCount field.Int64  // 点赞数
 	CommentCount  field.Int64  // 评论数
+	Hash          field.String // 哈希值
 
 	fieldMap map[string]field.Expr
 }
@@ -68,6 +70,7 @@ func (v *video) updateTableName(table string) *video {
 	v.CoverURL = field.NewString(table, "cover_url")
 	v.FavoriteCount = field.NewInt64(table, "favorite_count")
 	v.CommentCount = field.NewInt64(table, "comment_count")
+	v.Hash = field.NewString(table, "hash")
 
 	v.fillFieldMap()
 
@@ -90,12 +93,13 @@ func (v *video) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (v *video) fillFieldMap() {
-	v.fieldMap = make(map[string]field.Expr, 5)
+	v.fieldMap = make(map[string]field.Expr, 6)
 	v.fieldMap["video_id"] = v.VideoID
 	v.fieldMap["play_url"] = v.PlayURL
 	v.fieldMap["cover_url"] = v.CoverURL
 	v.fieldMap["favorite_count"] = v.FavoriteCount
 	v.fieldMap["comment_count"] = v.CommentCount
+	v.fieldMap["hash"] = v.Hash
 }
 
 func (v video) clone(db *gorm.DB) video {

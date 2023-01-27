@@ -5,15 +5,22 @@ const (
 	RedisUserNameCacheKey = "username"
 	// RedisUserIdCacheKey redis用户id缓存Key
 	RedisUserIdCacheKey = "user_id"
-	// RedisLastTimeStamp 上次生成id时间戳
-	RedisLastTimeStamp = "userid_last_timestamp"
+	// RedisUserIDLastTimeStamp 上次生成id时间戳
+	RedisUserIDLastTimeStamp = "userid_last_timestamp"
+	// RedisVideoIDLastTimeStamp 上次生成video_id时间戳
+	RedisVideoIDLastTimeStamp = "video_id_last_timestamp"
+)
 
+const (
 	// LimitKeyPrefix redis限流key前缀
 	LimitKeyPrefix = "periodlimit"
 	// LimitKeyUserApi redis限流key user的api服务
 	LimitKeyUserApi = "user_api"
 	// LimitKeyVideoApi redis限流key video的api服务
 	LimitKeyVideoApi = "video_api"
+)
+
+const (
 	// MAXBytes video服务限制文件最大为50M
 	MAXBytes = 50 * 1024 * 1024
 )
