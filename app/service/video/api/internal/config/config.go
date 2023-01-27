@@ -27,5 +27,7 @@ type Config struct {
 		Sec string
 		//是否有SSL证书
 		SSL uint8
+		//服务需要用到的桶
+		Buckets []string
 	}
 }
