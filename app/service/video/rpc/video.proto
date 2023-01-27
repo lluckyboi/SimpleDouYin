@@ -54,7 +54,7 @@ message PublishListResp{
   repeated Video VideoList = 3;
 }
 
-service video{
+service videoSv{
   rpc Feed(FeedReq) returns(FeedResp);
   rpc Publish(PublishReq) returns(PublishResp);
   rpc PublishList(PublishListReq)returns(PublishListResp);
