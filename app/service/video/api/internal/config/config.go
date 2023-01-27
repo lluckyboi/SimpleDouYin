@@ -18,4 +18,14 @@ type Config struct {
 		//请求上限
 		Quota int
 	}
+	Minio struct {
+		//url
+		EndPoint string
+		//账户
+		AcKey string
+		//密码
+		Sec string
+		//是否有SSL证书
+		SSL uint8
+	}
 }
