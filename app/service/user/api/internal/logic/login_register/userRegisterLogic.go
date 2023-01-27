@@ -52,7 +52,9 @@ func (l *UserRegisterLogic) UserRegister(req *types.RegisterRequest) (resp *type
 	})
 	if err != nil {
 		logx.Error("注册入库错误：", err)
-		return
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusCode = status.ErrAlreadyHaveUser
+		return resp, nil
 	}
 
 	//生成token

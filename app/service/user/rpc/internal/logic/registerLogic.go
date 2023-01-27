@@ -8,8 +8,6 @@ import (
 	"SimpleDouYin/app/common/tool"
 	"SimpleDouYin/app/service/user/dao/model"
 	"context"
-	"errors"
-	"github.com/zeromicro/go-zero/core/stores/redis"
 	"net/http"
 	"strconv"
 	"strings"
@@ -51,7 +49,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
 	User.UserID = sk.NextVal()
 
 	//比较时间戳，如果和上次的更大，说明时钟回拨
-	cmd := l.svcCtx.Redis.Get("userid_last_timestamp")
+	cmd := l.svcCtx.Redis.Get(key.RedisUserIDLastTimeStamp)
 	if cmd.Err() == nil {
 		//正常，开始比较
 		//redis结果处理
@@ -73,13 +71,13 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
 		} else {
 			l.svcCtx.Redis.Set(key.RedisUserIDLastTimeStamp, strconv.FormatInt(snowFlake.GetTimestamp(User.UserID), 10), 0)
 		}
-	} else if errors.Is(redis.Nil, cmd.Err()) {
+	} else if cmd.Err().Error() == "redis: nil" {
 		//如果是第一次写入，不用比较
 		l.svcCtx.Redis.Set(key.RedisUserIDLastTimeStamp, strconv.FormatInt(snowFlake.GetTimestamp(User.UserID), 10), 0)
 	} else { //报错了
 		regs.StatusCode = status.ErrOfServer
 		regs.StatusMsg = status.InfoErrOfServer
-		logx.Error("获取时间戳错误:", cmd.Err())
+		logx.Error("获取时间戳错误:", cmd.Err().Error())
 		return regs, nil
 	}
 
