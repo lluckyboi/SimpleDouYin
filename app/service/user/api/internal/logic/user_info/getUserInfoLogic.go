@@ -66,7 +66,7 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (*types.Ge
 		logx.Error(err.Error())
 		return resp, nil
 	}
-	log.Print("prc成功")
+	log.Print("user info rpc成功")
 	//返回结果
 	resp.StatusCode = GRsp.StatusCode
 	resp.StatusMsg = GRsp.StatusMsg
