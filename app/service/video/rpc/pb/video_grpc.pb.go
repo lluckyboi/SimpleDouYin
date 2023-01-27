@@ -18,158 +18,158 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// VideoClient is the client API for Video service.
+// VideoSvClient is the client API for VideoSv service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type VideoClient interface {
+type VideoSvClient interface {
 	Feed(ctx context.Context, in *FeedReq, opts ...grpc.CallOption) (*FeedResp, error)
 	Publish(ctx context.Context, in *PublishReq, opts ...grpc.CallOption) (*PublishResp, error)
 	PublishList(ctx context.Context, in *PublishListReq, opts ...grpc.CallOption) (*PublishListResp, error)
 }
 
-type videoClient struct {
+type videoSvClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewVideoClient(cc grpc.ClientConnInterface) VideoClient {
-	return &videoClient{cc}
+func NewVideoSvClient(cc grpc.ClientConnInterface) VideoSvClient {
+	return &videoSvClient{cc}
 }
 
-func (c *videoClient) Feed(ctx context.Context, in *FeedReq, opts ...grpc.CallOption) (*FeedResp, error) {
+func (c *videoSvClient) Feed(ctx context.Context, in *FeedReq, opts ...grpc.CallOption) (*FeedResp, error) {
 	out := new(FeedResp)
-	err := c.cc.Invoke(ctx, "/video.video/Feed", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/video.videoSv/Feed", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *videoClient) Publish(ctx context.Context, in *PublishReq, opts ...grpc.CallOption) (*PublishResp, error) {
+func (c *videoSvClient) Publish(ctx context.Context, in *PublishReq, opts ...grpc.CallOption) (*PublishResp, error) {
 	out := new(PublishResp)
-	err := c.cc.Invoke(ctx, "/video.video/Publish", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/video.videoSv/Publish", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *videoClient) PublishList(ctx context.Context, in *PublishListReq, opts ...grpc.CallOption) (*PublishListResp, error) {
+func (c *videoSvClient) PublishList(ctx context.Context, in *PublishListReq, opts ...grpc.CallOption) (*PublishListResp, error) {
 	out := new(PublishListResp)
-	err := c.cc.Invoke(ctx, "/video.video/PublishList", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/video.videoSv/PublishList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// VideoServer is the server API for Video service.
-// All implementations must embed UnimplementedVideoServer
+// VideoSvServer is the server API for VideoSv service.
+// All implementations must embed UnimplementedVideoSvServer
 // for forward compatibility
-type VideoServer interface {
+type VideoSvServer interface {
 	Feed(context.Context, *FeedReq) (*FeedResp, error)
 	Publish(context.Context, *PublishReq) (*PublishResp, error)
 	PublishList(context.Context, *PublishListReq) (*PublishListResp, error)
-	mustEmbedUnimplementedVideoServer()
+	mustEmbedUnimplementedVideoSvServer()
 }
 
-// UnimplementedVideoServer must be embedded to have forward compatible implementations.
-type UnimplementedVideoServer struct {
+// UnimplementedVideoSvServer must be embedded to have forward compatible implementations.
+type UnimplementedVideoSvServer struct {
 }
 
-func (UnimplementedVideoServer) Feed(context.Context, *FeedReq) (*FeedResp, error) {
+func (UnimplementedVideoSvServer) Feed(context.Context, *FeedReq) (*FeedResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Feed not implemented")
 }
-func (UnimplementedVideoServer) Publish(context.Context, *PublishReq) (*PublishResp, error) {
+func (UnimplementedVideoSvServer) Publish(context.Context, *PublishReq) (*PublishResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Publish not implemented")
 }
-func (UnimplementedVideoServer) PublishList(context.Context, *PublishListReq) (*PublishListResp, error) {
+func (UnimplementedVideoSvServer) PublishList(context.Context, *PublishListReq) (*PublishListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PublishList not implemented")
 }
-func (UnimplementedVideoServer) mustEmbedUnimplementedVideoServer() {}
+func (UnimplementedVideoSvServer) mustEmbedUnimplementedVideoSvServer() {}
 
-// UnsafeVideoServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to VideoServer will
+// UnsafeVideoSvServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to VideoSvServer will
 // result in compilation errors.
-type UnsafeVideoServer interface {
-	mustEmbedUnimplementedVideoServer()
+type UnsafeVideoSvServer interface {
+	mustEmbedUnimplementedVideoSvServer()
 }
 
-func RegisterVideoServer(s grpc.ServiceRegistrar, srv VideoServer) {
-	s.RegisterService(&Video_ServiceDesc, srv)
+func RegisterVideoSvServer(s grpc.ServiceRegistrar, srv VideoSvServer) {
+	s.RegisterService(&VideoSv_ServiceDesc, srv)
 }
 
-func _Video_Feed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _VideoSv_Feed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FeedReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VideoServer).Feed(ctx, in)
+		return srv.(VideoSvServer).Feed(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/video.video/Feed",
+		FullMethod: "/video.videoSv/Feed",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServer).Feed(ctx, req.(*FeedReq))
+		return srv.(VideoSvServer).Feed(ctx, req.(*FeedReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Video_Publish_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _VideoSv_Publish_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PublishReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VideoServer).Publish(ctx, in)
+		return srv.(VideoSvServer).Publish(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/video.video/Publish",
+		FullMethod: "/video.videoSv/Publish",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServer).Publish(ctx, req.(*PublishReq))
+		return srv.(VideoSvServer).Publish(ctx, req.(*PublishReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Video_PublishList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _VideoSv_PublishList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PublishListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VideoServer).PublishList(ctx, in)
+		return srv.(VideoSvServer).PublishList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/video.video/PublishList",
+		FullMethod: "/video.videoSv/PublishList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VideoServer).PublishList(ctx, req.(*PublishListReq))
+		return srv.(VideoSvServer).PublishList(ctx, req.(*PublishListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Video_ServiceDesc is the grpc.ServiceDesc for Video service.
+// VideoSv_ServiceDesc is the grpc.ServiceDesc for VideoSv service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Video_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "video.video",
-	HandlerType: (*VideoServer)(nil),
+var VideoSv_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "video.videoSv",
+	HandlerType: (*VideoSvServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Feed",
-			Handler:    _Video_Feed_Handler,
+			Handler:    _VideoSv_Feed_Handler,
 		},
 		{
 			MethodName: "Publish",
-			Handler:    _Video_Publish_Handler,
+			Handler:    _VideoSv_Publish_Handler,
 		},
 		{
 			MethodName: "PublishList",
-			Handler:    _Video_PublishList_Handler,
+			Handler:    _VideoSv_PublishList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
