@@ -1,22 +1,57 @@
 package svc
 
 import (
+	"SimpleDouYin/app/common/jwt"
 	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/middleware"
 	"SimpleDouYin/app/service/video/api/internal/config"
+	"SimpleDouYin/app/service/video/rpc/video"
+	"github.com/go-redis/redis"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/zeromicro/go-zero/rest"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
-	Config          config.Config
+	Config config.Config
+
 	CORSMiddleware  rest.Middleware
 	LimitMiddleware rest.Middleware
+
+	JWTMap      *jwt.JWTMap
+	VideoClient video.Video
+	RedisDB     *redis.Client
+	Minio       *minio.Client
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
+func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
+	var ssl bool
+	if c.Minio.SSL == 1 {
+		ssl = true
+	} else {
+		ssl = false
+	}
+
+	MinioClient, err := minio.New(c.Minio.EndPoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(c.Minio.AcKey, c.Minio.Sec, ""),
+		Secure: ssl,
+	})
+	if err != nil {
+		panic("连接至minio错误")
+	}
+
 	return &ServiceContext{
-		Config:          c,
+		Config:      c,
+		JWTMap:      JWTMap,
+		Minio:       MinioClient,
+		VideoClient: video.NewVideo(zrpc.MustNewClient(c.VideoClient)),
+		RedisDB: redis.NewClient(&redis.Options{
+			Addr:     c.RedisDB.RHost,
+			Password: c.RedisDB.RPass,
+			DB:       0, // use default DB
+		}),
 		CORSMiddleware:  middleware.NewCORSMiddleware().Handle,
-		LimitMiddleware: middleware.NewLimitMiddleware(key.LimitKeyVideoApi, c.LimitKey.Seconds, c.LimitKey.Quota).Handle,
+		LimitMiddleware: middleware.NewLimitMiddleware(key.LimitKeyUserApi, c.LimitKey.Seconds, c.LimitKey.Quota).Handle,
 	}
 }
