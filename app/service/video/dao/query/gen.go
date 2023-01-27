@@ -13,33 +13,38 @@ import (
 
 func Use(db *gorm.DB) *Query {
 	return &Query{
-		db:           db,
-		VideoPublish: newVideoPublish(db),
+		db:      db,
+		Publish: newPublish(db),
+		Video:   newVideo(db),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	VideoPublish videoPublish
+	Publish publish
+	Video   video
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:           db,
-		VideoPublish: q.VideoPublish.clone(db),
+		db:      db,
+		Publish: q.Publish.clone(db),
+		Video:   q.Video.clone(db),
 	}
 }
 
 type queryCtx struct {
-	VideoPublish *videoPublishDo
+	Publish *publishDo
+	Video   *videoDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		VideoPublish: q.VideoPublish.WithContext(ctx),
+		Publish: q.Publish.WithContext(ctx),
+		Video:   q.Video.WithContext(ctx),
 	}
 }
 
