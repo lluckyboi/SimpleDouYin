@@ -35,6 +35,9 @@ message PublishReq{
   int64 UserId = 1;
   string Title = 2;
   string VideoUrl = 3;
+  int64 VideoId =4;
+  string hash  =5;
+  string CoverUrl = 6;
 }
 message PublishResp{
   int32  StatusCode = 1;
