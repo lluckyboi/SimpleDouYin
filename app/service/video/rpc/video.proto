@@ -7,7 +7,7 @@ message FeedReq{
   string LastTime = 1;
 }
 message FeedResp{
-  string StatusCode = 1;
+  int32  StatusCode = 1;
   string StatusMsg = 2;
   string NextTime = 3;
   repeated Video VideoList = 4;
@@ -37,7 +37,7 @@ message PublishReq{
   string VideoUrl = 3;
 }
 message PublishResp{
-  string StatusCode = 1;
+  int32  StatusCode = 1;
   string StatusMsg = 2;
 }
 
@@ -46,7 +46,7 @@ message PublishListReq{
   int64 UserId = 1;
 }
 message PublishListResp{
-  string StatusCode = 1;
+  int32  StatusCode = 1;
   string StatusMsg = 2;
   repeated Video VideoList = 3;
 }

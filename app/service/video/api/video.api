@@ -17,7 +17,7 @@ type (
 		Hash     string `json:"hash,optional"`
 	}
 	PublishResponse {
-		StatusCode string `json:"status_code"`
+		StatusCode int32  `json:"status_code"`
 		StatusMsg  string `json:"status_msg"`
 	}
 )
@@ -29,7 +29,7 @@ type (
 		Token    string `form:"token,optional"`
 	}
 	FeedResponse {
-		StatusCode string  `json:"status_code"`
+		StatusCode int32   `json:"status_code"`
 		StatusMsg  string  `json:"status_msg"`
 		NextTime   string  `json:"next_time"`
 		VideoList  []video `json:"video_list"`
@@ -60,7 +60,7 @@ type (
 		UserId string `form:"user_id"`
 	}
 	PublishListResponse {
-		StatusCode string  `json:"status_code"`
+		StatusCode int32   `json:"status_code"`
 		StatusMsg  string  `json:"status_msg"`
 		VideoList  []video `json:"video_list"`
 	}

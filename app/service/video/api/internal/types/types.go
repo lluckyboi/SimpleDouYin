@@ -11,7 +11,7 @@ type PublishRequest struct {
 }
 
 type PublishResponse struct {
-	StatusCode string `json:"status_code"`
+	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg"`
 }
 
@@ -21,7 +21,7 @@ type FeedRequest struct {
 }
 
 type FeedResponse struct {
-	StatusCode string  `json:"status_code"`
+	StatusCode int32   `json:"status_code"`
 	StatusMsg  string  `json:"status_msg"`
 	NextTime   string  `json:"next_time"`
 	VideoList  []video `json:"video_list"`
@@ -52,7 +52,7 @@ type PublishListRequest struct {
 }
 
 type PublishListResponse struct {
-	StatusCode string  `json:"status_code"`
+	StatusCode int32   `json:"status_code"`
 	StatusMsg  string  `json:"status_msg"`
 	VideoList  []video `json:"video_list"`
 }
