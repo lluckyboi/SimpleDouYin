@@ -5,6 +5,7 @@ import (
 	"SimpleDouYin/app/common/key"
 	"flag"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 
 	"SimpleDouYin/app/service/video/api/internal/config"
@@ -19,7 +20,7 @@ var configFile = flag.String("f", "etc/video.yaml", "the config file")
 
 func main() {
 	flag.Parse()
-
+	logx.DisableStat()
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 

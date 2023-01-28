@@ -32,6 +32,7 @@ func (l *PublishLogic) Publish(req *types.PublishRequest) (*types.PublishRespons
 	claims, err := jwt.ParseToken(req.Token)
 	if err != nil {
 		resp.StatusCode = status.ErrFailParseToken
+		resp.StatusMsg = "token解析失败"
 		logx.Error(err.Error())
 		return resp, nil
 	}

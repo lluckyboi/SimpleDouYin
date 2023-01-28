@@ -62,14 +62,14 @@ func (l *PublishLogic) Publish(in *pb.PublishReq) (*pb.PublishResp, error) {
 
 	//开始事务
 	tx := l.svcCtx.GormDB.Begin()
-	if err := tx.Create(&publish).Error; err != nil {
+	if err := tx.Create(&video).Error; err != nil {
 		tx.Rollback()
 		logx.Info(err)
 		resp.StatusCode = status.ErrOfServer
 		resp.StatusMsg = status.InfoErrOfServer
 		return resp, nil
 	}
-	if err := tx.Create(&video).Error; err != nil {
+	if err := tx.Create(&publish).Error; err != nil {
 		tx.Rollback()
 		logx.Info(err)
 		resp.StatusCode = status.ErrOfServer

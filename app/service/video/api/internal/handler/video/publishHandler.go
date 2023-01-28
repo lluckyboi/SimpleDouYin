@@ -18,7 +18,10 @@ func PublishHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		//上传到minio
-		helper.MinioUpload(r, svcCtx, w, &req)
+		err := helper.MinioUpload(r, svcCtx, w, &req)
+		if err != nil {
+			return
+		}
 
 		l := video.NewPublishLogic(r.Context(), svcCtx)
 		resp, err := l.Publish(&req)

@@ -61,6 +61,6 @@ func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
 			DB:       0, // use default DB
 		}),
 		CORSMiddleware:  middleware.NewCORSMiddleware().Handle,
-		LimitMiddleware: middleware.NewLimitMiddleware(key.LimitKeyUserApi, c.LimitKey.Seconds, c.LimitKey.Quota).Handle,
+		LimitMiddleware: middleware.NewLimitMiddleware(key.LimitKeyVideoApi, c.LimitKey.Seconds, c.LimitKey.Quota).Handle,
 	}
 }
