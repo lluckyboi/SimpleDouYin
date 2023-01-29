@@ -30,7 +30,7 @@ func NewPublishLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PublishLo
 func (l *PublishLogic) Publish(in *pb.PublishReq) (*pb.PublishResp, error) {
 	resp := new(pb.PublishResp)
 
-	t, err := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+	t, err := time.Parse("2006-01-02T15:04:05", time.Now().Format("2006-01-02T15:04:05"))
 	if err != nil {
 		logx.Info(err)
 		resp.StatusCode = status.ErrOfServer

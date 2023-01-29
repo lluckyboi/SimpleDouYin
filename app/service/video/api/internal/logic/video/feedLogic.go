@@ -47,16 +47,18 @@ func (l *FeedLogic) Feed(req *types.FeedRequest) (*types.FeedResponse, error) {
 	}
 
 	//检查时间戳
-	if req.LastTime == "" { //为空 默认当前时间
-		rpcReq.LastTime = time.Now().Format("2006-01-02 15:04:05")
+	if req.LastTime == "" || req.LastTime == "0" { //为空 默认当前时间
+		rpcReq.LastTime = time.Now().Format("2006-01-02T15:04:05")
 	} else { //检查时间戳格式
-		parse, err := time.Parse("2006-01-02 15:04:05", req.LastTime)
+		log.Println(req.LastTime)
+		parse, err := time.Parse("2006-01-02T15:04:05", req.LastTime)
 		if err != nil {
 			resp.StatusCode = status.ErrParseTime
 			resp.StatusMsg = "时间戳格式错误"
 			return resp, nil
 		}
-		rpcReq.LastTime = parse.String()
+		log.Println("解析时间戳成功:", parse)
+		rpcReq.LastTime = parse.Format("2006-01-02T15:04:05")
 	}
 
 	//调用rpc
