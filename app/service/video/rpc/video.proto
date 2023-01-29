@@ -5,6 +5,7 @@ option go_package = "./pb";
 //视频流
 message FeedReq{
   string LastTime = 1;
+  int64 UserId = 2;
 }
 message FeedResp{
   int32  StatusCode = 1;

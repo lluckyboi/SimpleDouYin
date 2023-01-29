@@ -9,6 +9,7 @@ const (
 	ErrLimitedRequest  = 2005 //请求被限流
 	ErrRejectedRequest = 2006 //请求被拒绝
 	ErrLengthErr       = 2007 //长度错误
+	ErrParseTime       = 2008 //时间解析错误
 )
 
 const (

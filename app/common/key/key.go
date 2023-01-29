@@ -23,4 +23,6 @@ const (
 const (
 	// MAXBytes video服务限制文件最大为50M
 	MAXBytes = 50 * 1024 * 1024
+	// FeedNum Feed视频流一次性返回的视频数
+	FeedNum = 10
 )

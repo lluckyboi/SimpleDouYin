@@ -30,16 +30,7 @@ func NewPublishLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PublishLo
 func (l *PublishLogic) Publish(in *pb.PublishReq) (*pb.PublishResp, error) {
 	resp := new(pb.PublishResp)
 
-	//时区加载
-	tz, err := time.LoadLocation("Asia/Shanghai")
-	if err != nil {
-		logx.Info(err)
-		resp.StatusCode = status.ErrOfServer
-		resp.StatusMsg = status.InfoErrOfServer
-		return resp, nil
-	}
-
-	t, err := time.Parse(time.RFC3339, time.Now().In(tz).Format(time.RFC3339))
+	t, err := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	if err != nil {
 		logx.Info(err)
 		resp.StatusCode = status.ErrOfServer
