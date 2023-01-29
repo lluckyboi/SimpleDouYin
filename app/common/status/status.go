@@ -1,5 +1,6 @@
 package status
 
+const SuccessCode = 0
 const (
 	ErrOfServer        = 500  //服务器错误
 	ErrNoSuchUser      = 2001 //用户名不存在

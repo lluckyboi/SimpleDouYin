@@ -160,7 +160,7 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 		resp.VideoList = append(resp.VideoList, &resVi)
 	}
 
-	resp.StatusCode = http.StatusOK
+	resp.StatusCode = status.SuccessCode
 	resp.StatusMsg = "成功"
 	resp.NextTime = publishs[count-1].PublishTime.Format("2006-01-02T15:04:05")
 	return resp, nil

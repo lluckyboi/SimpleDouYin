@@ -4,12 +4,10 @@ import (
 	"SimpleDouYin/app/common/sec"
 	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/service/user/dao/model"
-	"context"
-	"log"
-	"net/http"
-
 	"SimpleDouYin/app/service/user/rpc/internal/svc"
 	"SimpleDouYin/app/service/user/rpc/pb"
+	"context"
+	"log"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -55,7 +53,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginReps, error) {
 		return resp, nil
 	}
 
-	resp.StatusCode = http.StatusOK
+	resp.StatusCode = status.SuccessCode
 	resp.StatusMsg = "登录成功"
 	resp.UserId = user.UserID
 	return resp, nil

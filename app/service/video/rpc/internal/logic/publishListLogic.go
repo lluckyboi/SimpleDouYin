@@ -121,7 +121,7 @@ func (l *PublishListLogic) PublishList(in *pb.PublishListReq) (*pb.PublishListRe
 		resp.VideoList = append(resp.VideoList, &resVi)
 	}
 
-	resp.StatusCode = http.StatusOK
+	resp.StatusCode = status.SuccessCode
 	resp.StatusMsg = "成功"
 	return resp, nil
 }

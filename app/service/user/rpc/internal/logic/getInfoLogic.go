@@ -3,13 +3,11 @@ package logic
 import (
 	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/service/user/dao/model"
+	"SimpleDouYin/app/service/user/rpc/internal/svc"
+	"SimpleDouYin/app/service/user/rpc/pb"
 	"context"
 	"errors"
 	"gorm.io/gorm"
-	"net/http"
-
-	"SimpleDouYin/app/service/user/rpc/internal/svc"
-	"SimpleDouYin/app/service/user/rpc/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -54,7 +52,7 @@ func (l *GetInfoLogic) GetInfo(in *pb.GetInfoReq) (*pb.GetInfoReps, error) {
 		}
 	}
 
-	resp.StatusCode = http.StatusOK
+	resp.StatusCode = status.SuccessCode
 	resp.StatusMsg = "查询成功"
 	resp.User = &pb.UserInfo{
 		UserId:        User.UserID,

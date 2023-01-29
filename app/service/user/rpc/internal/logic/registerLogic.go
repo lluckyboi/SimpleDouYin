@@ -8,7 +8,6 @@ import (
 	"SimpleDouYin/app/common/tool"
 	"SimpleDouYin/app/service/user/dao/model"
 	"context"
-	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -100,7 +99,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
 	l.svcCtx.Redis.SAdd("username", in.Username)
 	l.svcCtx.Redis.SAdd("user_id", User.UserID)
 
-	regs.StatusCode = http.StatusOK
+	regs.StatusCode = status.SuccessCode
 	regs.StatusMsg = "注册成功"
 	regs.UserId = User.UserID
 	return regs, nil

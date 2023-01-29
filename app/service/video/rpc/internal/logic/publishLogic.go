@@ -4,7 +4,6 @@ import (
 	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/service/video/dao/model"
 	"context"
-	"net/http"
 	"time"
 
 	"SimpleDouYin/app/service/video/rpc/internal/svc"
@@ -69,7 +68,7 @@ func (l *PublishLogic) Publish(in *pb.PublishReq) (*pb.PublishResp, error) {
 	}
 	tx.Commit()
 
-	resp.StatusCode = http.StatusOK
+	resp.StatusCode = status.SuccessCode
 	resp.StatusMsg = "上传视频成功"
 	return resp, nil
 }
