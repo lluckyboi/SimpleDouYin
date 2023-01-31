@@ -5,8 +5,6 @@ import (
 	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/service/video/dao/model"
 	"context"
-	"errors"
-	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"strconv"
@@ -38,8 +36,7 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 
 	var publishs []model.Publish
 	videos := make([]model.Video, key.FeedNum)
-	users := make([]model.User, key.FeedNum)
-	follows := make([]bool, key.FeedNum)
+	var users []model.User
 
 	//解析时间戳
 	parse, err := time.Parse("2006-01-02T15:04:05", in.LastTime)
@@ -59,7 +56,7 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 		Limit(key.FeedNum).
 		Find(&publishs).
 		Count(&count)
-	if errr.Error != nil && (!errors.Is(errr.Error, gorm.ErrRecordNotFound)) {
+	if errr.Error != nil {
 		log.Println("查publish表错误", errr.Error)
 		resp.StatusCode = status.ErrOfServer
 		resp.StatusMsg = "服务器错误"
@@ -72,47 +69,60 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 		resp.StatusMsg = "成功"
 		return resp, err
 	}
+
 	//查询对应user和video
 	//查询对应user
+	var UIDS []int64
+	var strb strings.Builder
+	strb.WriteString("FIELD(user_id")
 	for idx := 0; int64(idx) < count; idx++ {
-		errr = l.svcCtx.GormDB.Model(&model.User{}).
-			Where("user_id = ?", publishs[idx].UserID).
-			First(&users[idx])
-		if errr.Error != nil && (!errors.Is(errr.Error, gorm.ErrRecordNotFound)) {
-			log.Println("查询出错:", errr.Error)
-			resp.StatusCode = status.ErrOfServer
-			resp.StatusMsg = "服务器错误"
-			return resp, nil
-		}
+		UIDS = append(UIDS, publishs[idx].UserID)
+		strb.WriteString(",")
+		strb.WriteString(strconv.FormatInt(publishs[idx].VideoID, 10))
+	}
+	strb.WriteString(")")
+
+	errr = l.svcCtx.GormDB.Model(&model.User{}).
+		Where("user_id in ?", UIDS).
+		Order(strb.String()).
+		Find(&users)
+	if errr.Error != nil {
+		log.Println("查询出错:", errr.Error)
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = "服务器错误"
+		return resp, nil
 	}
 	log.Println("users查询成功:", users)
 
 	//user对应follow关系
-	for idx := 0; int64(idx) < count; idx++ {
-		sf := model.Follow{}
-		errr1 := l.svcCtx.GormDB.
-			Where(&model.Follow{
-				UID:       in.UserId,
-				TargetUID: users[idx].UserID,
-			}).First(&sf)
-		if errr1.Error != nil {
-			if !errors.Is(errr1.Error, gorm.ErrRecordNotFound) {
-				log.Println("查询follow出错:", errr1.Error)
-				resp.StatusCode = status.ErrOfServer
-				resp.StatusMsg = "服务器错误"
-				return resp, nil
-			} else { //如果没查到，就是没关注
-				follows[idx] = false
+	var Tfollows []model.Follow
+	follows := make([]bool, count)
+	for i := 0; int64(i) < count; i++ {
+		follows[i] = false
+	}
+
+	errr1 := l.svcCtx.GormDB.
+		Where("uid = ? and target_uid in ?", in.UserId, UIDS).
+		Order(strb.String()).
+		Find(&Tfollows)
+	if errr1.Error != nil {
+		log.Println("查询出错:", errr.Error)
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = "服务器错误"
+		return resp, nil
+	}
+	for _, v := range Tfollows {
+		for ku, vu := range UIDS {
+			if vu == v.TargetUID {
+				follows[ku] = true
 			}
-		} else {
-			follows[idx] = true
 		}
 	}
 	log.Println("follows查询成功:", follows)
 
 	//对应video
 	var VIDS []int64
-	var strb strings.Builder
+	strb.Reset()
 	strb.WriteString("FIELD(video_id")
 	for idx := 0; int64(idx) < count; idx++ {
 		VIDS = append(VIDS, publishs[idx].VideoID)
@@ -125,7 +135,7 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 		Where("video_id in ?", VIDS).
 		Order(strb.String()).
 		Find(&videos)
-	if errr.Error != nil && (!errors.Is(errr.Error, gorm.ErrRecordNotFound)) {
+	if errr.Error != nil {
 		log.Println("查询出错:", errr.Error)
 		resp.StatusCode = status.ErrOfServer
 		resp.StatusMsg = "服务器错误"

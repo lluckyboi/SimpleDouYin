@@ -9,17 +9,21 @@ import (
 	"SimpleDouYin/app/service/video/api/internal/svc"
 	"SimpleDouYin/app/service/video/api/internal/types"
 	"SimpleDouYin/app/service/video/dao/model"
+	"bytes"
 	"context"
 	"crypto/md5"
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/minio/minio-go/v7"
+	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"gorm.io/gorm"
+	"io"
 	"log"
 	"net/http"
+	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -108,11 +112,59 @@ func MinioUpload(r *http.Request, svcCtx *svc.ServiceContext, w http.ResponseWri
 		log.Println("没有相同的hash 需要上传")
 		req.Hash = hash
 
+		//生成临时文件
+		_, err := file.Seek(0, 0)
+		if err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			log.Println("生成临时文件出错", err.Error())
+			return err
+		}
+		tep, err := os.Create(strconv.FormatInt(ID, 10) + ".mp4")
+		if err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			log.Println("生成临时文件出错", err.Error())
+			return err
+		}
+		_, err = io.Copy(tep, file)
+		if err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			log.Println("复制临时文件出错", err.Error())
+			return err
+		}
+
+		//生成封面图
+		buffer := bytes.NewBuffer(nil)
+		err = ffmpeg.Input(strconv.FormatInt(ID, 10)+".mp4").
+			Filter("select", ffmpeg.Args{fmt.Sprintf("gte(n,1)")}).
+			Output("pipe:", ffmpeg.KwArgs{"vframes": 1, "format": "image2", "vcodec": "mjpeg"}).
+			WithOutput(buffer).
+			Run()
+		if err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			log.Println("生成封面图错误", err.Error())
+			return err
+		}
+
+		//上传图片到Minio
 		var builder strings.Builder
+		builder.WriteString(strconv.FormatInt(ID, 10))
+		builder.WriteString(".png")
+		ImgName := builder.String()
+		_, err = svcCtx.Minio.PutObject(context.Background(),
+			svcCtx.Config.Minio.Buckets,
+			ImgName, buffer, int64(buffer.Len()),
+			minio.PutObjectOptions{ContentType: "image/png"})
+		if err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			log.Println("上传出错", err.Error())
+			return err
+		}
+
+		//上传视频到Minio
+		builder.Reset()
 		builder.WriteString(strconv.FormatInt(ID, 10))
 		builder.WriteString(path.Ext(fileHeader.Filename))
 		ObjectName := builder.String()
-
 		_, err = svcCtx.Minio.PutObject(context.Background(),
 			svcCtx.Config.Minio.Buckets,
 			ObjectName, file, fileHeader.Size,
@@ -131,7 +183,21 @@ func MinioUpload(r *http.Request, svcCtx *svc.ServiceContext, w http.ResponseWri
 		bd1.WriteString("/")
 		bd1.WriteString(ObjectName)
 		req.PlayUrl = bd1.String()
-		req.CoverUrl = "https://typora.fengxiangrui.top/1674827367.png"
+
+		bd1.Reset()
+		bd1.WriteString("https://")
+		bd1.WriteString(svcCtx.Config.Minio.Url)
+		bd1.WriteString("/")
+		bd1.WriteString(svcCtx.Config.Minio.Buckets)
+		bd1.WriteString("/")
+		bd1.WriteString(ImgName)
+		req.CoverUrl = bd1.String()
+
+		//删除临时文件
+		err = os.Remove(strconv.FormatInt(ID, 10) + ".mp4")
+		if err != nil {
+			log.Print("删除临时文件出错", err)
+		}
 		return nil
 	} else { //出错了
 		httpx.ErrorCtx(r.Context(), w, db.Error)

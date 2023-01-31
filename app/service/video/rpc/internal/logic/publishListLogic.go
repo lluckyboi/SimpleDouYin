@@ -10,6 +10,8 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -67,18 +69,27 @@ func (l *PublishListLogic) PublishList(in *pb.PublishListReq) (*pb.PublishListRe
 	}
 	log.Println("video查询成功:", videos)
 
-	//查询作者
+	//查询作者信息
 	users := make([]model.User, pubCount)
+	var UIDS []int64
+	var strb strings.Builder
+	strb.WriteString("FIELD(user_id")
 	for idx := 0; int64(idx) < pubCount; idx++ {
-		errr = l.svcCtx.GormDB.Model(&model.User{}).
-			Where("user_id = ?", publishs[idx].UserID).
-			First(&users[idx])
-		if errr.Error != nil && (!errors.Is(errr.Error, gorm.ErrRecordNotFound)) {
-			log.Println("查询出错:", errr.Error)
-			resp.StatusCode = status.ErrOfServer
-			resp.StatusMsg = status.InfoErrOfServer
-			return resp, nil
-		}
+		UIDS = append(UIDS, publishs[idx].VideoID)
+		strb.WriteString(",")
+		strb.WriteString(strconv.FormatInt(publishs[idx].VideoID, 10))
+	}
+	strb.WriteString(")")
+
+	errr = l.svcCtx.GormDB.Model(&model.User{}).
+		Where("user_id in ?", UIDS).
+		Order(strb.String()).
+		Find(&users)
+	if errr.Error != nil {
+		log.Println("查询出错:", errr.Error)
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = "服务器错误"
+		return resp, nil
 	}
 	log.Println("users查询成功:", users)
 
