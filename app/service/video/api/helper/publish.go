@@ -116,7 +116,7 @@ func MinioUpload(r *http.Request, svcCtx *svc.ServiceContext, w http.ResponseWri
 		_, err := file.Seek(0, 0)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
-			log.Println("生成临时文件出错", err.Error())
+			log.Println("生成临时文件出错:seek出错:", err.Error())
 			return err
 		}
 		tep, err := os.Create(strconv.FormatInt(ID, 10) + ".mp4")
@@ -129,6 +129,11 @@ func MinioUpload(r *http.Request, svcCtx *svc.ServiceContext, w http.ResponseWri
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			log.Println("复制临时文件出错", err.Error())
+			//删除临时文件
+			errr := os.Remove(strconv.FormatInt(ID, 10) + ".mp4")
+			if errr != nil {
+				log.Print("删除临时文件出错", errr)
+			}
 			return err
 		}
 
@@ -142,9 +147,21 @@ func MinioUpload(r *http.Request, svcCtx *svc.ServiceContext, w http.ResponseWri
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			log.Println("生成封面图错误", err.Error())
+			//删除临时文件
+			errr := os.Remove(strconv.FormatInt(ID, 10) + ".mp4")
+			if errr != nil {
+				log.Print("删除临时文件出错", errr)
+			}
 			return err
 		}
 
+		//重置偏移
+		_, err = file.Seek(0, 0)
+		if err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			log.Println("重置偏移出错:", err.Error())
+			return err
+		}
 		//上传图片到Minio
 		var builder strings.Builder
 		builder.WriteString(strconv.FormatInt(ID, 10))

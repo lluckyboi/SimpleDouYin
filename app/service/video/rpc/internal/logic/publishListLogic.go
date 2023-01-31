@@ -70,12 +70,12 @@ func (l *PublishListLogic) PublishList(in *pb.PublishListReq) (*pb.PublishListRe
 	log.Println("video查询成功:", videos)
 
 	//查询作者信息
-	users := make([]model.User, pubCount)
+	var users []model.User
 	var UIDS []int64
 	var strb strings.Builder
 	strb.WriteString("FIELD(user_id")
 	for idx := 0; int64(idx) < pubCount; idx++ {
-		UIDS = append(UIDS, publishs[idx].VideoID)
+		UIDS = append(UIDS, publishs[idx].UserID)
 		strb.WriteString(",")
 		strb.WriteString(strconv.FormatInt(publishs[idx].VideoID, 10))
 	}
