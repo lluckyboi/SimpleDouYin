@@ -29,6 +29,8 @@ type Config struct {
 		SSL uint8
 		//服务需要用到的桶
 		Buckets string
+		//资源前缀
+		Url string
 	}
 	DB struct {
 		DataSource string

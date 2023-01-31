@@ -116,7 +116,7 @@ func MinioUpload(r *http.Request, svcCtx *svc.ServiceContext, w http.ResponseWri
 		_, err = svcCtx.Minio.PutObject(context.Background(),
 			svcCtx.Config.Minio.Buckets,
 			ObjectName, file, fileHeader.Size,
-			minio.PutObjectOptions{ContentType: "binary/octet-stream"})
+			minio.PutObjectOptions{ContentType: "video/mp4"})
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			log.Println("上传出错", err.Error())
@@ -124,8 +124,8 @@ func MinioUpload(r *http.Request, svcCtx *svc.ServiceContext, w http.ResponseWri
 		}
 
 		var bd1 strings.Builder
-		bd1.WriteString("http://")
-		bd1.WriteString(svcCtx.Config.Minio.EndPoint)
+		bd1.WriteString("https://")
+		bd1.WriteString(svcCtx.Config.Minio.Url)
 		bd1.WriteString("/")
 		bd1.WriteString(svcCtx.Config.Minio.Buckets)
 		bd1.WriteString("/")

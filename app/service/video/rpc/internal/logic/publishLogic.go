@@ -45,7 +45,7 @@ func (l *PublishLogic) Publish(in *pb.PublishReq) (*pb.PublishResp, error) {
 	}
 	video := &model.Video{
 		VideoID:  in.VideoId,
-		PlayURL:  in.CoverUrl,
+		PlayURL:  in.VideoUrl,
 		CoverURL: in.CoverUrl,
 		Hash:     in.Hash,
 	}
