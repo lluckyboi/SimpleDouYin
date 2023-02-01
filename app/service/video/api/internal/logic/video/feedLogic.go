@@ -6,6 +6,7 @@ import (
 	"SimpleDouYin/app/service/video/rpc/videosv"
 	"context"
 	"log"
+	"strconv"
 	"time"
 
 	"SimpleDouYin/app/service/video/api/internal/svc"
@@ -46,19 +47,18 @@ func (l *FeedLogic) Feed(req *types.FeedRequest) (*types.FeedResponse, error) {
 		rpcReq.UserId = -1
 	}
 
-	//检查时间戳
+	//校验时间戳
 	if req.LastTime == "" || req.LastTime == "0" { //为空 默认当前时间
-		rpcReq.LastTime = time.Now().Format("2006-01-02T15:04:05")
-	} else { //检查时间戳格式
-		log.Println(req.LastTime)
-		parse, err := time.Parse("2006-01-02T15:04:05", req.LastTime)
+		rpcReq.LastTime = time.Now().Unix()
+	} else {
+		var err error
+		rpcReq.LastTime, err = strconv.ParseInt(req.LastTime, 10, 64)
 		if err != nil {
-			resp.StatusCode = status.ErrParseTime
-			resp.StatusMsg = "时间戳格式错误"
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = status.InfoErrOfServer
+			logx.Error("校验时间戳失败:", err.Error())
 			return resp, nil
 		}
-		log.Println("解析时间戳成功:", parse)
-		rpcReq.LastTime = parse.Format("2006-01-02T15:04:05")
 	}
 
 	//调用rpc

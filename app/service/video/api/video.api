@@ -31,7 +31,7 @@ type (
 	FeedResponse {
 		StatusCode int32   `json:"status_code"`
 		StatusMsg  string  `json:"status_msg"`
-		NextTime   string  `json:"next_time"`
+		NextTime   int64   `json:"next_time"`
 		VideoList  []video `json:"video_list"`
 	}
 	video {

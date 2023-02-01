@@ -47,7 +47,7 @@ func (l *PublishLogic) Publish(in *pb.PublishReq) (*pb.PublishResp, error) {
 	}
 	log.Print("时间:", t)
 	publish := &model.Publish{
-		PublishTime: t,
+		PublishTime: t.Unix(),
 		Title:       in.Title,
 		UserID:      in.UserId,
 		VideoID:     in.VideoId,

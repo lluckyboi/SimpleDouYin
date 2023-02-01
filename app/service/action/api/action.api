@@ -1,9 +1,13 @@
 syntax = "v1"
 
 info(
-    title: "type title here"
-    desc: "type desc here"
-    author: "type author here"
-    email: "type email herkkke"
-    version: "type version here"
+    title: "action服务"
+    author: "luckyboi"
+    version: "v1.0"
 )
+
+type FavoriteReq {
+    Action string `form:"action"`
+    VideoId string `form:"video_id"`
+    ActionType string `form:"action_type"`
+}

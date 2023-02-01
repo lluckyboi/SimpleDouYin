@@ -4,6 +4,8 @@ import (
 	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/service/video/dao/model"
+	"SimpleDouYin/app/service/video/rpc/internal/svc"
+	"SimpleDouYin/app/service/video/rpc/pb"
 	"context"
 	"errors"
 	"gorm.io/gorm"
@@ -11,10 +13,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
-
-	"SimpleDouYin/app/service/video/rpc/internal/svc"
-	"SimpleDouYin/app/service/video/rpc/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -40,20 +38,10 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 	videos := make([]model.Video, key.FeedNum)
 	var usersTp []model.User
 
-	//解析时间戳
-	parse, err := time.Parse("2006-01-02T15:04:05", in.LastTime)
-	if err != nil {
-		log.Println(in.LastTime)
-		resp.StatusCode = status.ErrParseTime
-		resp.StatusMsg = "时间戳格式错误"
-		return resp, nil
-	}
-	log.Print("解析时间戳完成", in.LastTime, "pares:", parse)
-
 	//先去publish找到发布时间符合条件的
 	var count int64
 	errr := l.svcCtx.GormDB.Model(&model.Publish{}).
-		Where("publish_time < ?", parse.Format("2006-01-02 15:04:05")).
+		Where("publish_time < ?", in.LastTime).
 		Order("publish_time desc").
 		Limit(key.FeedNum).
 		Find(&publishs).
@@ -62,14 +50,14 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 		log.Println("查publish表错误", errr.Error)
 		resp.StatusCode = status.ErrOfServer
 		resp.StatusMsg = "服务器错误"
-		return resp, err
+		return resp, nil
 	}
 	log.Println("publish查询成功:", publishs, count)
 	//没有了
 	if count == 0 {
 		resp.StatusCode = http.StatusOK
 		resp.StatusMsg = "成功"
-		return resp, err
+		return resp, nil
 	}
 
 	//查询对应user和video
@@ -197,6 +185,6 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 
 	resp.StatusCode = status.SuccessCode
 	resp.StatusMsg = "成功"
-	resp.NextTime = publishs[count-1].PublishTime.Format("2006-01-02T15:04:05")
+	resp.NextTime = publishs[count-1].PublishTime
 	return resp, nil
 }
