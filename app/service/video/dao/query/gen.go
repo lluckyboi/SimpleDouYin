@@ -14,7 +14,9 @@ import (
 func Use(db *gorm.DB) *Query {
 	return &Query{
 		db:      db,
+		Follow:  newFollow(db),
 		Publish: newPublish(db),
+		User:    newUser(db),
 		Video:   newVideo(db),
 	}
 }
@@ -22,7 +24,9 @@ func Use(db *gorm.DB) *Query {
 type Query struct {
 	db *gorm.DB
 
+	Follow  follow
 	Publish publish
+	User    user
 	Video   video
 }
 
@@ -31,19 +35,25 @@ func (q *Query) Available() bool { return q.db != nil }
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:      db,
+		Follow:  q.Follow.clone(db),
 		Publish: q.Publish.clone(db),
+		User:    q.User.clone(db),
 		Video:   q.Video.clone(db),
 	}
 }
 
 type queryCtx struct {
+	Follow  *followDo
 	Publish *publishDo
+	User    *userDo
 	Video   *videoDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
+		Follow:  q.Follow.WithContext(ctx),
 		Publish: q.Publish.WithContext(ctx),
+		User:    q.User.WithContext(ctx),
 		Video:   q.Video.WithContext(ctx),
 	}
 }
