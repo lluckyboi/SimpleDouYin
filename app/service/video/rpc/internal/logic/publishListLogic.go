@@ -95,8 +95,11 @@ func (l *PublishListLogic) PublishList(in *pb.PublishListReq) (*pb.PublishListRe
 
 	//关注情况
 	//user对应follow关系
+	var follow []model.Follow
 	isF := true
-	errr = l.svcCtx.GormDB.Where("uid = ? and target_uid = ?", in.UserId, users[0].UserID)
+	errr = l.svcCtx.GormDB.
+		Where("uid = ? and target_uid = ?", in.UserId, users[0].UserID).
+		First(&follow)
 	if errr.Error != nil && (!errors.Is(errr.Error, gorm.ErrRecordNotFound)) {
 		log.Println("查询出错:", errr.Error)
 		resp.StatusCode = status.ErrOfServer
@@ -105,7 +108,7 @@ func (l *PublishListLogic) PublishList(in *pb.PublishListReq) (*pb.PublishListRe
 	} else if errors.Is(errr.Error, gorm.ErrRecordNotFound) {
 		isF = false
 	}
-	log.Println("follow查询成功")
+	log.Println("follow查询成功:", follow)
 
 	//整合结果
 	for i := 0; int64(i) < pubCount; i++ {
