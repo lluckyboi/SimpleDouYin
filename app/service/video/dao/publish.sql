@@ -1,7 +1,7 @@
 create table publish
 (
-    publish_time datetime        not null on update CURRENT_TIMESTAMP comment '上传时间戳',
     title        varchar(255)    not null comment '标题',
+    publish_time bigint unsigned not null comment '时间戳 unix',
     user_id      bigint unsigned not null comment '用户id',
     video_id     bigint unsigned not null comment '视频id',
     constraint user_id
