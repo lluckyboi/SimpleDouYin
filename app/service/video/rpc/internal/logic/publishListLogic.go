@@ -96,7 +96,7 @@ func (l *PublishListLogic) PublishList(in *pb.PublishListReq) (*pb.PublishListRe
 	//关注情况
 	//user对应follow关系
 	isF := true
-	errr = l.svcCtx.GormDB.Where("uid = ? and target_uid = ?")
+	errr = l.svcCtx.GormDB.Where("uid = ? and target_uid = ?", in.UserId, users[0].UserID)
 	if errr.Error != nil && (!errors.Is(errr.Error, gorm.ErrRecordNotFound)) {
 		log.Println("查询出错:", errr.Error)
 		resp.StatusCode = status.ErrOfServer
