@@ -4,8 +4,11 @@ import (
 	"SimpleDouYin/app/common/jwt"
 	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/status"
+	"SimpleDouYin/app/service/user/dao/model"
 	"SimpleDouYin/app/service/video/rpc/videosv"
 	"context"
+	"errors"
+	"gorm.io/gorm"
 	"strconv"
 
 	"SimpleDouYin/app/service/video/api/internal/svc"
@@ -48,9 +51,18 @@ func (l *PublishListLogic) PublishList(req *types.PublishListRequest) (*types.Pu
 	//查询id是否存在
 	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserIdCacheKey, uid)
 	if bl.Val() == false {
-		resp.StatusCode = status.ErrNoSuchUser
-		resp.StatusMsg = "无效的id"
-		return resp, nil
+		var user []model.User
+		if res := l.svcCtx.GormDB.
+			Where("user_id = ?", uid).
+			First(&user); res.Error != nil && !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = status.InfoErrOfServer
+			return resp, err
+		} else {
+			resp.StatusCode = status.ErrNoSuchUser
+			resp.StatusMsg = "无效的id"
+			return resp, nil
+		}
 	}
 
 	Grsp, err := l.svcCtx.VideoClient.PublishList(l.ctx, &videosv.PublishListReq{
