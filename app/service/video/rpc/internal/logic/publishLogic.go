@@ -4,6 +4,7 @@ import (
 	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/service/video/dao/model"
 	"context"
+	"log"
 	"time"
 
 	"SimpleDouYin/app/service/video/rpc/internal/svc"
@@ -28,15 +29,23 @@ func NewPublishLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PublishLo
 
 func (l *PublishLogic) Publish(in *pb.PublishReq) (*pb.PublishResp, error) {
 	resp := new(pb.PublishResp)
-
-	t, err := time.Parse("2006-01-02T15:04:05", time.Now().Format("2006-01-02T15:04:05"))
+	//加载时区
+	loc, err := time.LoadLocation("Asia/Shanghai")
 	if err != nil {
 		logx.Info(err)
 		resp.StatusCode = status.ErrOfServer
 		resp.StatusMsg = status.InfoErrOfServer
 		return resp, nil
 	}
-
+	//解析时间
+	t, err := time.Parse("2006-01-02T15:04:05Z07:00", time.Now().In(loc).Format("2006-01-02T15:04:05Z07:00"))
+	if err != nil {
+		logx.Info(err)
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = status.InfoErrOfServer
+		return resp, nil
+	}
+	log.Print("时间:", t)
 	publish := &model.Publish{
 		PublishTime: t,
 		Title:       in.Title,

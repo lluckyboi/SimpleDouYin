@@ -69,7 +69,7 @@ func (l *PublishListLogic) PublishList(in *pb.PublishListReq) (*pb.PublishListRe
 	}
 	log.Println("video查询成功:", videos)
 
-	//查询作者信息
+	//查询作者信息 只有一个
 	var users []model.User
 	var UIDS []int64
 	var strb strings.Builder
@@ -113,10 +113,10 @@ func (l *PublishListLogic) PublishList(in *pb.PublishListReq) (*pb.PublishListRe
 		var resVi pb.Video
 
 		//author
-		Author.Id = users[i].UserID
-		Author.FollowerCount = users[i].FollowCount
-		Author.FollowerCount = users[i].FollowerCount
-		Author.Name = users[i].Name
+		Author.Id = users[0].UserID
+		Author.FollowerCount = users[0].FollowCount
+		Author.FollowerCount = users[0].FollowerCount
+		Author.Name = users[0].Name
 		Author.IsFollow = isF
 
 		//video
