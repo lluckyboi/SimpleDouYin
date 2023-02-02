@@ -86,18 +86,21 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 	}
 	log.Println("users查询成功:", usersTp)
 	//user补全
-	uidx := 0
-	var users []model.User
-	users = append(users, usersTp[uidx])
-	for i := 1; int64(i) < count; i++ {
-		if publishs[i].UserID == usersTp[uidx].UserID {
-			users = append(users, usersTp[uidx])
-		} else if int64(uidx+1) >= userCt {
-			break
-		} else {
-			uidx++
+	//构造map 标记对应user在userTp位置
+	UserIdx := make(map[int64]int)
+	for _, val := range publishs {
+		for idx, uv := range usersTp {
+			if val.UserID == uv.UserID {
+				UserIdx[uv.UserID] = idx
+			}
 		}
 	}
+
+	var users []model.User
+	for i := 0; int64(i) < count; i++ {
+		users = append(users, usersTp[UserIdx[publishs[i].UserID]])
+	}
+	log.Println("users补全成功:", users)
 
 	//user对应follow关系
 	var Tfollows []model.Follow

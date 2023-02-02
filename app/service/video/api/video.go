@@ -24,9 +24,9 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	//有时第三方服务耗时较大 比如rpc默认两秒邮件有时候会超时 设置video-api超时时间15s video-rpc5秒
-	c.Timeout = int64(15 * time.Second)
-	c.VideoClient.Timeout = int64(5 * time.Second)
+	//有时第三方服务耗时较大 比如rpc默认两秒邮件有时候会超时 设置video-api超时时间30s video-rpc15秒
+	c.Timeout = int64(30 * time.Second)
+	c.VideoClient.Timeout = int64(15 * time.Second)
 	//限制文件大小
 	c.MaxBytes = key.MAXBytes
 	server := rest.MustNewServer(c.RestConf)
