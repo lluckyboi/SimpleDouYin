@@ -138,7 +138,28 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 	}
 	log.Println("video查询成功:", videos)
 
-	//todo favorite
+	//是否favorite
+	var Tfavorite []model.Favorite
+	favs := make([]bool, count)
+	for i := 0; int64(i) < count; i++ {
+		favs[i] = false
+	}
+	errr1 = l.svcCtx.GormDB.
+		Where("user_id = ? and video_id in ?", in.UserId, VIDS).
+		Find(&Tfavorite)
+	if errr1.Error != nil && (!errors.Is(errr1.Error, gorm.ErrRecordNotFound)) {
+		log.Println("查询出错:", errr1.Error)
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = "服务器错误"
+		return resp, nil
+	}
+	for _, v := range Tfavorite {
+		for ku, vu := range VIDS {
+			if vu == v.VideoID {
+				favs[ku] = true
+			}
+		}
+	}
 
 	//整合成结果
 	for i := 0; int64(i) < count; i++ {
@@ -156,7 +177,7 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 		resVi.Author = &Author
 		resVi.Title = publishs[i].Title
 		resVi.Id = publishs[i].VideoID
-		resVi.IsFavorite = false
+		resVi.IsFavorite = favs[i]
 		resVi.CommentCount = videos[i].CommentCount
 		resVi.FavoriteCount = videos[i].FavoriteCount
 		resVi.CoverUrl = videos[i].CoverURL
