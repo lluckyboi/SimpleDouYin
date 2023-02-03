@@ -46,6 +46,7 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 			UserID:     in.UserId,
 			Content:    in.CommentText,
 			CreateDate: time.Now(),
+			VideoID:    in.VideoId,
 		}
 		if err := l.svcCtx.GormDB.Create(comment); err.Error != nil &&
 			!errors.Is(err.Error, gorm.ErrRecordNotFound) {
