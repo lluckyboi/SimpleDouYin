@@ -6,3 +6,10 @@ func LengthCheck(ss string) bool {
 	}
 	return true
 }
+
+func CommentLengthCheck(ss string) bool {
+	if len(ss) > 320 || len(ss) < 1 {
+		return false
+	}
+	return true
+}
