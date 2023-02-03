@@ -2,7 +2,7 @@ package logic
 
 import (
 	"SimpleDouYin/app/common/status"
-	"SimpleDouYin/app/service/video/dao/model"
+	"SimpleDouYin/app/dao/model"
 	"context"
 	"log"
 	"time"

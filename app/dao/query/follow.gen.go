@@ -5,6 +5,7 @@
 package query
 
 import (
+	"SimpleDouYin/app/dao/model"
 	"context"
 
 	"gorm.io/gorm"
@@ -15,8 +16,6 @@ import (
 	"gorm.io/gen/field"
 
 	"gorm.io/plugin/dbresolver"
-
-	"SimpleDouYin/app/service/video/dao/model"
 )
 
 func newFollow(db *gorm.DB) follow {
