@@ -38,6 +38,14 @@ func (l *CommentLogic) Comment(req *types.CommentReq) (resp *types.CommentResp, 
 		return resp, nil
 	}
 
+	//校验ActionType
+	act, err := tool.AcTypeStringToBool(req.ActionType)
+	if err != nil {
+		resp.StatusCode = status.ErrUnknownAcType
+		resp.StatusMsg = "unknown ActionType"
+		return resp, nil
+	}
+
 	//解析ID
 	vid, err := strconv.ParseInt(req.VideoId, 10, 64)
 	if err != nil {
@@ -45,26 +53,22 @@ func (l *CommentLogic) Comment(req *types.CommentReq) (resp *types.CommentResp, 
 		resp.StatusMsg = "VID有误或服务器错误"
 		return resp, nil
 	}
-	cid, err := strconv.ParseInt(req.CommentId, 10, 64)
-	if err != nil {
-		resp.StatusCode = status.ErrOfServer
-		resp.StatusMsg = "VID有误或服务器错误"
-		return resp, nil
-	}
 
-	//长度校验
-	if !tool.CommentLengthCheck(req.CommentText) {
-		resp.StatusCode = status.ErrLengthErr
-		resp.StatusMsg = "长度有误"
-		return resp, nil
-	}
-
-	//校验ActionType
-	act, err := tool.AcTypeStringToBool(req.ActionType)
-	if err != nil {
-		resp.StatusCode = status.ErrUnknownAcType
-		resp.StatusMsg = "unknown ActionType"
-		return resp, nil
+	var cid int64 = 0
+	if act {
+		cid, err = strconv.ParseInt(req.CommentId, 10, 64)
+		if err != nil {
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = "VID有误或服务器错误"
+			return resp, nil
+		}
+	} else {
+		//长度校验
+		if !tool.CommentLengthCheck(req.CommentText) {
+			resp.StatusCode = status.ErrLengthErr
+			resp.StatusMsg = "长度有误"
+			return resp, nil
+		}
 	}
 
 	//rpc

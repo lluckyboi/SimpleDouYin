@@ -36,7 +36,6 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 		//插入记录
 		if err := l.svcCtx.GormDB.Create(&model.Comment{
 			UserID:     in.UserId,
-			CommentID:  in.CommentId,
 			Content:    in.CommentText,
 			CreateDate: time.Now(),
 		}); err != nil {
