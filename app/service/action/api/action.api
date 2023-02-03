@@ -53,7 +53,7 @@ type (
 type (
 	CommentReq {
 		Token       string `form:"token"`
-		VedioId     string `form:"video_id"`
+		VideoId     string `form:"video"`
 		ActionType  string `form:"action_type"`
 		CommentText string `form:"comment_text"`
 		CommentId   string `form:"comment_id"`
@@ -75,7 +75,7 @@ type (
 type (
 	CommentListReq {
 		Token   string `form:"token"`
-		VedioId string `form:"video_id"`
+		VideoId string `form:"video_id"`
 	}
 	CommentListResp {
 		StatusCode  int32     `json:"status_code"`

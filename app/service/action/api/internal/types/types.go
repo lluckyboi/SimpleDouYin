@@ -44,7 +44,7 @@ type Author struct {
 
 type CommentReq struct {
 	Token       string `form:"token"`
-	VedioId     string `form:"video_id"`
+	VideoId     string `form:"video"`
 	ActionType  string `form:"action_type"`
 	CommentText string `form:"comment_text"`
 	CommentId   string `form:"comment_id"`
@@ -65,7 +65,7 @@ type Comment struct {
 
 type CommentListReq struct {
 	Token   string `form:"token"`
-	VedioId string `form:"video_id"`
+	VideoId string `form:"video_id"`
 }
 
 type CommentListResp struct {
