@@ -70,3 +70,10 @@ message CommentListResp {
   string StatusMsg = 2;
   repeated Comment CommentList = 3;
 }
+
+service Action{
+  rpc Favorite(FavoriteReq) returns (FavoriteResp);
+  rpc FavoriteList(FavoriteListReq) returns (FavoriteListResp);
+  rpc Comment(CommentReq) returns (CommentResp);
+  rpc CommentList(CommentListReq) returns (CommentListResp);
+}
