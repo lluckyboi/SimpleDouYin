@@ -14,6 +14,7 @@ const (
 	ErrUnknownAcType   = 2009 //未知action type
 	ErrAlreadyFav      = 2010 //已经点赞
 	ErrNotFind         = 2011 //没找到
+	ErrAlreadyDel      = 2012 //已经删除
 )
 
 const (

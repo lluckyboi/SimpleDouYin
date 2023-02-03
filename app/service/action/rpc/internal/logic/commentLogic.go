@@ -91,6 +91,18 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 		resp.StatusMsg = "发布评论成功"
 		resp.Comment = resCom
 	} else { //删除评论
+		//先查询是否已经删除
+		var com model.Comment
+		err := l.svcCtx.GormDB.Where("comment_id = ?", in.CommentId).First(&com)
+		if err.Error != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
+			log.Println("查找comment_id出错:", err.Error)
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = status.InfoErrOfServer
+		} else if errors.Is(err.Error, gorm.ErrRecordNotFound) {
+			resp.StatusCode = status.ErrAlreadyDel
+			resp.StatusMsg = "该评论已经被删除"
+			return resp, nil
+		}
 		//开始事务
 		tx := l.svcCtx.GormDB.Begin()
 		//删除记录
@@ -108,7 +120,7 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 			return resp, nil
 		}
 		//更新video.comment_count
-		err := tx.Exec("UPDATE video SET comment_count=comment_count-1 where video_id = ?", in.VideoId)
+		err = tx.Exec("UPDATE video SET comment_count=comment_count-1 where video_id = ?", in.VideoId)
 		if err.Error != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
 			log.Println("更新评论数-1出错:", err.Error)
