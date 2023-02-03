@@ -28,7 +28,8 @@ func NewCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CommentLo
 	}
 }
 
-func (l *CommentLogic) Comment(req *types.CommentReq) (resp *types.CommentResp, err error) {
+func (l *CommentLogic) Comment(req *types.CommentReq) (*types.CommentResp, error) {
+	resp := new(types.CommentResp)
 	//解析token
 	claims, err := jwt.ParseToken(req.Token)
 	if err != nil {

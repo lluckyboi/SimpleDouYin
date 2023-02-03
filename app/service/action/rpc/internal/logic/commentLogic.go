@@ -36,11 +36,13 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 		//开始事务
 		tx := l.svcCtx.GormDB.Begin()
 		//插入记录
-		if err := l.svcCtx.GormDB.Create(&model.Comment{
+		comment := &model.Comment{
 			UserID:     in.UserId,
 			Content:    in.CommentText,
 			CreateDate: time.Now(),
-		}); err.Error != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
+		}
+		if err := l.svcCtx.GormDB.Create(comment); err.Error != nil &&
+			!errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
 			log.Println("发布评论查询出错:", err.Error)
 			resp.StatusCode = status.ErrOfServer
@@ -59,8 +61,33 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 		//提交事务
 		tx.Commit()
 
+		//获取用户
+		var user model.User
+		err = l.svcCtx.GormDB.Where("user_id = ?", in.UserId).First(&user)
+		if err != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
+			logx.Info(err)
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = status.InfoErrOfServer
+			return resp, nil
+		}
+		author := &pb.Author{
+			Id:            user.UserID,
+			Name:          user.Name,
+			FollowCount:   user.FollowCount,
+			FollowerCount: user.FollowerCount,
+			IsFollow:      false,
+		}
+		//写入结果
+		resCom := &pb.Comment{
+			Id:         comment.CommentID,
+			User:       author,
+			Content:    comment.Content,
+			CreateDate: comment.CreateDate.Format("01-02"),
+		}
+
 		resp.StatusCode = status.SuccessCode
 		resp.StatusMsg = "发布评论成功"
+		resp.Comment = resCom
 	} else { //删除评论
 		//开始事务
 		tx := l.svcCtx.GormDB.Begin()
