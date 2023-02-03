@@ -5,6 +5,7 @@ import (
 	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/service/action/rpc/action"
 	"context"
+	"log"
 	"strconv"
 
 	"SimpleDouYin/app/service/action/api/internal/svc"
@@ -80,5 +81,6 @@ func (l *FavoriteListLogic) FavoriteList(req *types.FavoriteListReq) (*types.Fav
 		}
 		resp.VideoList = append(resp.VideoList, video)
 	}
+	log.Print(resp)
 	return resp, nil
 }

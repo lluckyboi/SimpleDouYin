@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/common/tool"
 	"SimpleDouYin/app/service/action/dao/model"
@@ -51,6 +50,7 @@ func (l *FavoriteListLogic) FavoriteList(in *pb.FavoriteListReq) (*pb.FavoriteLi
 		resp.StatusMsg = "成功"
 		return resp, nil
 	}
+	log.Println("favorites查询成功", favCt)
 
 	//查询视频
 	var VIDS []int64
@@ -69,6 +69,20 @@ func (l *FavoriteListLogic) FavoriteList(in *pb.FavoriteListReq) (*pb.FavoriteLi
 	}
 	log.Println("video查询成功:", videos)
 
+	//查询publish
+	var publishs []model.Publish
+	errr = l.svcCtx.GormDB.Model(&model.Publish{}).
+		Where("video_id in ?", VIDS).
+		Order(tool.FiledStringBuild("video_id", VIDS)).
+		Find(&publishs)
+	if errr.Error != nil && (!errors.Is(errr.Error, gorm.ErrRecordNotFound)) {
+		log.Println("查publish表错误", errr.Error)
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = "服务器错误"
+		return resp, err.Error
+	}
+	log.Println("publishs 查询成功", publishs)
+
 	//查询作者
 	var (
 		usersTp []model.User
@@ -76,7 +90,7 @@ func (l *FavoriteListLogic) FavoriteList(in *pb.FavoriteListReq) (*pb.FavoriteLi
 		userCt  int64
 	)
 	for idx := 0; int64(idx) < favCt; idx++ {
-		UIDS = append(UIDS, favorites[idx].UserID)
+		UIDS = append(UIDS, publishs[idx].UserID)
 	}
 	errr = l.svcCtx.GormDB.Model(&model.User{}).
 		Where("user_id in ?", UIDS).
@@ -129,20 +143,6 @@ func (l *FavoriteListLogic) FavoriteList(in *pb.FavoriteListReq) (*pb.FavoriteLi
 		}
 	}
 	log.Println("follows查询成功:", follows)
-
-	//title查询
-	var publishs []model.Publish
-	errr = l.svcCtx.GormDB.Model(&model.Publish{}).
-		Where("user_id = ? and video_id in ?", in.UserId, VIDS).
-		Order(tool.FiledStringBuild("video_id", VIDS)).
-		Limit(key.FeedNum).
-		Find(&publishs)
-	if errr.Error != nil && (!errors.Is(errr.Error, gorm.ErrRecordNotFound)) {
-		log.Println("查publish表错误", errr.Error)
-		resp.StatusCode = status.ErrOfServer
-		resp.StatusMsg = "服务器错误"
-		return resp, err.Error
-	}
 
 	//整合成结果
 	for i := 0; int64(i) < favCt; i++ {
