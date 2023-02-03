@@ -31,7 +31,12 @@ func NewCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CommentLo
 
 func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 	resp := new(pb.CommentResp)
-	resp.Comment = &pb.Comment{}
+	resp.Comment = &pb.Comment{
+		Id:         0,
+		User:       &pb.Author{},
+		Content:    "",
+		CreateDate: "",
+	}
 
 	if in.ActionType { //发布评论
 		//开始事务
@@ -99,6 +104,7 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 			log.Println("查找comment_id出错:", err.Error)
 			resp.StatusCode = status.ErrOfServer
 			resp.StatusMsg = status.InfoErrOfServer
+			return resp, err.Error
 		} else if errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			resp.StatusCode = status.ErrAlreadyDel
 			resp.StatusMsg = "该评论已经被删除"
