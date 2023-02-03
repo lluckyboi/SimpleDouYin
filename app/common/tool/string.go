@@ -1,6 +1,7 @@
 package tool
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 )
@@ -22,4 +23,15 @@ func FiledStringBuild(column string, IDs []int64) string {
 	}
 	strb.WriteString(")")
 	return strb.String()
+}
+
+func AcTypeStringToBool(act string) (bool, error) {
+	switch act {
+	case "0":
+		return true, nil
+	case "1":
+		return false, nil
+	default:
+		return true, errors.New("unknown ActionType")
+	}
 }

@@ -11,6 +11,7 @@ const (
 	ErrRejectedRequest = 2006 //请求被拒绝
 	ErrLengthErr       = 2007 //长度错误
 	ErrParseTime       = 2008 //时间解析错误
+	ErrUnknownAcType   = 2009 //未知action type
 )
 
 const (

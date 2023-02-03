@@ -3,6 +3,7 @@ package action
 import (
 	"SimpleDouYin/app/common/jwt"
 	"SimpleDouYin/app/common/status"
+	"SimpleDouYin/app/common/tool"
 	"SimpleDouYin/app/service/action/api/internal/svc"
 	"SimpleDouYin/app/service/action/api/internal/types"
 	"SimpleDouYin/app/service/action/rpc/action"
@@ -43,11 +44,18 @@ func (l *FavoriteLogic) Favorite(req *types.FavoriteReq) (*types.FavoriteResp, e
 		resp.StatusMsg = "VID有误或服务器错误"
 		return resp, err
 	}
+	//校验ActionType
+	act, err := tool.AcTypeStringToBool(req.ActionType)
+	if err != nil {
+		resp.StatusCode = status.ErrUnknownAcType
+		resp.StatusMsg = "unknown ActionType"
+		return resp, nil
+	}
 	//rpc
 	Grsp, err := l.svcCtx.ActionClient.Favorite(l.ctx, &action.FavoriteReq{
 		UserId:     claims.UserId,
 		VideoId:    vid,
-		ActionType: false,
+		ActionType: act,
 	})
 	if err != nil {
 		resp.StatusCode = status.ErrOfServer
