@@ -47,16 +47,16 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 			log.Println("发布评论查询出错:", err.Error)
 			resp.StatusCode = status.ErrOfServer
 			resp.StatusMsg = status.InfoErrOfServer
-			return resp, nil
+			return resp, err.Error
 		}
 		//更新video.comment_count
 		err := tx.Exec("UPDATE video SET comment_count=comment_count+1 where video_id = ?", in.VideoId)
 		if err.Error != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
-			logx.Info(err)
+			log.Println("更新评论数+1错误:", err.Error)
 			resp.StatusCode = status.ErrOfServer
 			resp.StatusMsg = status.InfoErrOfServer
-			return resp, nil
+			return resp, err.Error
 		}
 		//提交事务
 		tx.Commit()
@@ -64,12 +64,13 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 		//获取用户
 		var user model.User
 		err = l.svcCtx.GormDB.Where("user_id = ?", in.UserId).First(&user)
-		if err != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
-			logx.Info(err)
+		if err.Error != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
+			log.Println("获取用户错误:", err.Error)
 			resp.StatusCode = status.ErrOfServer
 			resp.StatusMsg = status.InfoErrOfServer
-			return resp, nil
+			return resp, err.Error
 		}
+
 		author := &pb.Author{
 			Id:            user.UserID,
 			Name:          user.Name,
@@ -77,6 +78,7 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 			FollowerCount: user.FollowerCount,
 			IsFollow:      false,
 		}
+
 		//写入结果
 		resCom := &pb.Comment{
 			Id:         comment.CommentID,

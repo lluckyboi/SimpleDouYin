@@ -6,6 +6,7 @@ import (
 	"SimpleDouYin/app/common/tool"
 	"SimpleDouYin/app/service/action/rpc/action"
 	"context"
+	"log"
 	"strconv"
 
 	"SimpleDouYin/app/service/action/api/internal/svc"
@@ -88,5 +89,25 @@ func (l *CommentLogic) Comment(req *types.CommentReq) (*types.CommentResp, error
 	}
 	resp.StatusCode = Grsp.StatusCode
 	resp.StatusMsg = Grsp.StatusMsg
+	log.Println("comment rpc成功")
+
+	//resp.comment
+	cm := Grsp.Comment
+	user := types.Author{
+		Id:            cm.User.Id,
+		Name:          cm.User.Name,
+		FollowCount:   cm.User.FollowerCount,
+		FollowerCount: cm.User.FollowCount,
+		IsFollow:      cm.User.IsFollow,
+	}
+	log.Println(user)
+	comment := types.Comment{
+		Id:         cm.Id,
+		User:       user,
+		Content:    cm.Content,
+		CreateDate: cm.CreateDate,
+	}
+	log.Print("last")
+	resp.Comment = comment
 	return resp, nil
 }
