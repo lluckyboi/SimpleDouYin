@@ -25,40 +25,40 @@ type (
         UserId string `form:"user_id"`
         Token string `form:"token"`
     }
-    FavoriteListResp{
+    FavoriteListResp {
         StatusCode string `json:"status_code"`
         StatusMsg string `json:"status_msg"`
-        VideoList  []Video `json:"video_list"`
+        VideoList []Video `json:"video_list"`
     }
     Video {
-        Id            int64  `json:"id"`
-        Author        Author `json:"author"`
-        PlayUrl       string `json:"play_url"`
-        CoverUrl      string `json:"cover_url"`
-        FavoriteCount int64  `json:"favorite_count"`
-        CommentCount  int64  `json:"comment_count"`
-        IsFavorite    bool   `json:"is_favorite"`
-        Title         string `json:"title"`
+        Id int64 `json:"id"`
+        Author Author `json:"author"`
+        PlayUrl string `json:"play_url"`
+        CoverUrl string `json:"cover_url"`
+        FavoriteCount int64 `json:"favorite_count"`
+        CommentCount int64 `json:"comment_count"`
+        IsFavorite bool `json:"is_favorite"`
+        Title string `json:"title"`
     }
     Author {
-        Id            int64  `json:"id"`
-        Name          string `json:"name"`
-        FollowCount   int64  `json:"follow_count"`
-        FollowerCount int64  `json:"follower_count"`
-        IsFollow      bool   `json:"is_follow"`
+        Id int64 `json:"id"`
+        Name string `json:"name"`
+        FollowCount int64 `json:"follow_count"`
+        FollowerCount int64 `json:"follower_count"`
+        IsFollow bool `json:"is_follow"`
     }
 )
 
 //评论操作
-type(
-    CommentReq{
+type (
+    CommentReq {
         Token string `form:"token"`
         VedioId string `form:"video_id"`
         ActionType string `form:"action_type"`
         CommentText string `form:"comment_text"`
         CommentId string `form:"comment_id"`
     }
-    CommentResp{
+    CommentResp {
         StatusCode int32 `json:"status_code"`
         StatusMsg string `json:"status_msg"`
         Comment Comment `json:"comment"`
@@ -69,7 +69,6 @@ type(
         Content string `json:"content"`
         CreateDate string `json:"create_date"`
     }
-
 )
 
 //评论列表
@@ -84,3 +83,25 @@ type (
         CommentList []Comment `json:"comment_list"`
     }
 )
+
+@server(
+    group : action
+    middleware : CORSMiddleware,LimitMiddleware
+)
+service Action {
+    @doc "赞操作"
+    @handler Favorite
+    post /douyin/favorite/action (FavoriteReq) returns (FavoriteResp)
+
+    @doc "喜欢列表"
+    @handler FavoriteList
+    get /douyin/favorite/list (FavoriteListReq) returns (FavoriteListResp)
+
+    @doc "评论操作"
+    @handler Comment
+    post /douyin/comment/action (CommentReq) returns (CommentResp)
+
+    @doc "评论列表"
+    @handler CommentList
+    get /douyin/comment/list (CommentListReq) returns (CommentResp)
+}
