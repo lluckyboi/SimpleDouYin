@@ -103,6 +103,10 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 			resp.StatusCode = status.ErrOfServer
 			resp.StatusMsg = status.InfoErrOfServer
 			return resp, nil
+		} else if errors.Is(err.Error, gorm.ErrRecordNotFound) {
+			resp.StatusCode = status.ErrNotFind
+			resp.StatusMsg = "comment_id有误"
+			return resp, nil
 		}
 		//更新video.comment_count
 		err := tx.Exec("UPDATE video SET comment_count=comment_count-1 where video_id = ?", in.VideoId)
