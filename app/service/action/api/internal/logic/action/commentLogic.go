@@ -107,7 +107,6 @@ func (l *CommentLogic) Comment(req *types.CommentReq) (*types.CommentResp, error
 		Content:    cm.Content,
 		CreateDate: cm.CreateDate,
 	}
-	log.Print("last")
 	resp.Comment = comment
 	return resp, nil
 }
