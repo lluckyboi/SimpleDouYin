@@ -3,18 +3,16 @@ package logic
 import (
 	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/status"
+	"SimpleDouYin/app/common/tool"
 	"SimpleDouYin/app/service/video/dao/model"
 	"SimpleDouYin/app/service/video/rpc/internal/svc"
 	"SimpleDouYin/app/service/video/rpc/pb"
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 	"log"
 	"net/http"
-	"strconv"
-	"strings"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type FeedLogic struct {
@@ -63,19 +61,14 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 	//查询对应user和video
 	//查询对应user
 	var UIDS []int64
-	var strb strings.Builder
 	var userCt int64
-	strb.WriteString("FIELD(user_id")
 	for idx := 0; int64(idx) < count; idx++ {
 		UIDS = append(UIDS, publishs[idx].UserID)
-		strb.WriteString(",")
-		strb.WriteString(strconv.FormatInt(publishs[idx].VideoID, 10))
 	}
-	strb.WriteString(")")
 
 	errr = l.svcCtx.GormDB.Model(&model.User{}).
 		Where("user_id in ?", UIDS).
-		Order(strb.String()).
+		Order(tool.FiledStringBuild("user_id", UIDS)).
 		Find(&usersTp).
 		Count(&userCt)
 	if errr.Error != nil && (!errors.Is(errr.Error, gorm.ErrRecordNotFound)) {
@@ -108,18 +101,9 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 	for i := 0; int64(i) < count; i++ {
 		follows[i] = false
 	}
-	//构造字符串
-	strb.Reset()
-	strb.WriteString("FIELD(uid")
-	for idx := 0; int64(idx) < count; idx++ {
-		UIDS = append(UIDS, publishs[idx].UserID)
-		strb.WriteString(",")
-		strb.WriteString(strconv.FormatInt(publishs[idx].VideoID, 10))
-	}
-	strb.WriteString(")")
+
 	errr1 := l.svcCtx.GormDB.
 		Where("uid = ? and target_uid in ?", in.UserId, UIDS).
-		Order(strb.String()).
 		Find(&Tfollows)
 	if errr1.Error != nil && (!errors.Is(errr1.Error, gorm.ErrRecordNotFound)) {
 		log.Println("查询出错:", errr1.Error)
@@ -138,18 +122,13 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 
 	//对应video
 	var VIDS []int64
-	strb.Reset()
-	strb.WriteString("FIELD(video_id")
 	for idx := 0; int64(idx) < count; idx++ {
 		VIDS = append(VIDS, publishs[idx].VideoID)
-		strb.WriteString(",")
-		strb.WriteString(strconv.FormatInt(publishs[idx].VideoID, 10))
 	}
-	strb.WriteString(")")
 
 	errr = l.svcCtx.GormDB.Model(&model.Video{}).
 		Where("video_id in ?", VIDS).
-		Order(strb.String()).
+		Order(tool.FiledStringBuild("video_id", VIDS)).
 		Find(&videos)
 	if errr.Error != nil && (!errors.Is(errr.Error, gorm.ErrRecordNotFound)) {
 		log.Println("查询出错:", errr.Error)

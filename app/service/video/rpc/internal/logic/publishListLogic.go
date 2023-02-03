@@ -2,18 +2,16 @@ package logic
 
 import (
 	"SimpleDouYin/app/common/status"
+	"SimpleDouYin/app/common/tool"
 	"SimpleDouYin/app/service/video/dao/model"
 	"SimpleDouYin/app/service/video/rpc/internal/svc"
 	"SimpleDouYin/app/service/video/rpc/pb"
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 	"log"
 	"net/http"
-	"strconv"
-	"strings"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type PublishListLogic struct {
@@ -72,18 +70,13 @@ func (l *PublishListLogic) PublishList(in *pb.PublishListReq) (*pb.PublishListRe
 	//查询作者信息 只有一个
 	var users []model.User
 	var UIDS []int64
-	var strb strings.Builder
-	strb.WriteString("FIELD(user_id")
 	for idx := 0; int64(idx) < pubCount; idx++ {
 		UIDS = append(UIDS, publishs[idx].UserID)
-		strb.WriteString(",")
-		strb.WriteString(strconv.FormatInt(publishs[idx].VideoID, 10))
 	}
-	strb.WriteString(")")
 
 	errr = l.svcCtx.GormDB.Model(&model.User{}).
 		Where("user_id in ?", UIDS).
-		Order(strb.String()).
+		Order(tool.FiledStringBuild("user_id", UIDS)).
 		Find(&users)
 	if errr.Error != nil {
 		log.Println("查询出错:", errr.Error)
