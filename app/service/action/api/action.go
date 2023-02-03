@@ -23,7 +23,7 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	//有时第三方服务耗时较大 比如rpc默认两秒邮件有时候会超时 设置video-api超时时间30s video-rpc15秒
+	//有时第三方服务耗时较大 比如rpc默认两秒邮件有时候会超时 设置api超时时间30s rpc15秒
 	c.Timeout = int64(30 * time.Second)
 	c.ActionClient.Timeout = int64(15 * time.Second)
 
