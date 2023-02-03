@@ -12,6 +12,7 @@ const (
 	ErrLengthErr       = 2007 //长度错误
 	ErrParseTime       = 2008 //时间解析错误
 	ErrUnknownAcType   = 2009 //未知action type
+	ErrAlreadyFav      = 2010 //已经点赞
 )
 
 const (
