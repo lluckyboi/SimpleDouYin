@@ -103,5 +103,5 @@ service Action {
 	
 	@doc "评论列表"
 	@handler CommentList
-	get /douyin/comment/list (CommentListReq) returns (CommentResp)
+	get /douyin/comment/list (CommentListReq) returns (CommentListResp)
 }
