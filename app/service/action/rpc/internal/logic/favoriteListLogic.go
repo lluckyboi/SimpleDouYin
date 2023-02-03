@@ -168,5 +168,7 @@ func (l *FavoriteListLogic) FavoriteList(in *pb.FavoriteListReq) (*pb.FavoriteLi
 
 		resp.VideoList = append(resp.VideoList, &resVi)
 	}
+	resp.StatusCode = status.SuccessCode
+	resp.StatusMsg = "获取列表成功"
 	return resp, nil
 }

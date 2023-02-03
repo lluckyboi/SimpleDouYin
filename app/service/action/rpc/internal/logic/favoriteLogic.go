@@ -38,6 +38,8 @@ func (l *FavoriteLogic) Favorite(in *pb.FavoriteReq) (*pb.FavoriteResp, error) {
 			resp.StatusMsg = status.InfoErrOfServer
 			return resp, nil
 		}
+		resp.StatusCode = status.SuccessCode
+		resp.StatusMsg = "点赞成功"
 	} else { //否则取消点赞
 		if err := l.svcCtx.GormDB.Where("user_id = ? and video_id = ?", in.UserId, in.VideoId).
 			Delete(&model.Favorite{}); err != nil {
@@ -46,6 +48,8 @@ func (l *FavoriteLogic) Favorite(in *pb.FavoriteReq) (*pb.FavoriteResp, error) {
 			resp.StatusMsg = status.InfoErrOfServer
 			return resp, nil
 		}
+		resp.StatusCode = status.SuccessCode
+		resp.StatusMsg = "取消点赞成功"
 	}
 	return resp, nil
 }
