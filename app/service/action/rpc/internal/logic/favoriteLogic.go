@@ -4,6 +4,7 @@ import (
 	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/service/action/dao/model"
 	"context"
+	"log"
 
 	"SimpleDouYin/app/service/action/rpc/internal/svc"
 	"SimpleDouYin/app/service/action/rpc/pb"
@@ -29,6 +30,7 @@ func (l *FavoriteLogic) Favorite(in *pb.FavoriteReq) (*pb.FavoriteResp, error) {
 	resp := new(pb.FavoriteResp)
 	//如果是点赞
 	if in.ActionType {
+		log.Print("开始点赞事务")
 		//开始事务
 		tx := l.svcCtx.GormDB.Begin()
 		//创建记录
@@ -42,6 +44,7 @@ func (l *FavoriteLogic) Favorite(in *pb.FavoriteReq) (*pb.FavoriteResp, error) {
 			resp.StatusMsg = status.InfoErrOfServer
 			return resp, nil
 		}
+		log.Println("创建记录成功")
 		//更新video.favorite_count
 		err := tx.Exec("UPDATE video SET favorite_count=favorite_count+1 where video_id = ?", in.VideoId)
 		if err != nil {
@@ -51,6 +54,7 @@ func (l *FavoriteLogic) Favorite(in *pb.FavoriteReq) (*pb.FavoriteResp, error) {
 			resp.StatusMsg = status.InfoErrOfServer
 			return resp, nil
 		}
+		log.Println("更新成功")
 		//提交事务
 		tx.Commit()
 
