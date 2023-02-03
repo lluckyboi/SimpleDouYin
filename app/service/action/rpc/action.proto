@@ -46,7 +46,7 @@ message CommentReq {
   int64 VideoId = 2;
   bool ActionType = 3;
   string CommentText = 4;
-  string CommentId = 5;
+  int64 CommentId = 5;
 }
 message CommentResp {
   int32  StatusCode = 1;
