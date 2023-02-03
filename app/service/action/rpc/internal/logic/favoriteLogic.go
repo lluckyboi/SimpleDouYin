@@ -1,6 +1,8 @@
 package logic
 
 import (
+	"SimpleDouYin/app/common/status"
+	"SimpleDouYin/app/dao/model"
 	"context"
 
 	"SimpleDouYin/app/service/action/rpc/internal/svc"
@@ -24,7 +26,26 @@ func NewFavoriteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Favorite
 }
 
 func (l *FavoriteLogic) Favorite(in *pb.FavoriteReq) (*pb.FavoriteResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.FavoriteResp{}, nil
+	resp := new(pb.FavoriteResp)
+	//如果是点赞
+	if in.ActionType {
+		if err := l.svcCtx.GormDB.Create(&model.Favorite{
+			UserID:  in.UserId,
+			VideoID: in.VideoId,
+		}); err != nil {
+			logx.Info(err)
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = status.InfoErrOfServer
+			return resp, nil
+		}
+	} else { //否则取消点赞
+		if err := l.svcCtx.GormDB.Where("user_id = ? and video_id = ?", in.UserId, in.VideoId).
+			Delete(&model.Favorite{}); err != nil {
+			logx.Info(err)
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = status.InfoErrOfServer
+			return resp, nil
+		}
+	}
+	return resp, nil
 }
