@@ -42,7 +42,7 @@ func (l *FavoriteLogic) Favorite(req *types.FavoriteReq) (*types.FavoriteResp, e
 	if err != nil {
 		resp.StatusCode = status.ErrOfServer
 		resp.StatusMsg = "VID有误或服务器错误"
-		return resp, err
+		return resp, nil
 	}
 	//校验ActionType
 	act, err := tool.AcTypeStringToBool(req.ActionType)

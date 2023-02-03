@@ -46,7 +46,7 @@ func (l *PublishListLogic) PublishList(req *types.PublishListRequest) (*types.Pu
 	if err != nil {
 		resp.StatusCode = status.ErrOfServer
 		resp.StatusMsg = "UID有误或解析错误"
-		return resp, err
+		return resp, nil
 	}
 	//查询id是否存在
 	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserIdCacheKey, uid)
@@ -57,7 +57,7 @@ func (l *PublishListLogic) PublishList(req *types.PublishListRequest) (*types.Pu
 			First(&user); res.Error != nil && !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 			resp.StatusCode = status.ErrOfServer
 			resp.StatusMsg = status.InfoErrOfServer
-			return resp, err
+			return resp, nil
 		} else {
 			resp.StatusCode = status.ErrNoSuchUser
 			resp.StatusMsg = "无效的id"

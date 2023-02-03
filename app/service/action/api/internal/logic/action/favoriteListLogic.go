@@ -43,7 +43,7 @@ func (l *FavoriteListLogic) FavoriteList(req *types.FavoriteListReq) (*types.Fav
 	if err != nil {
 		resp.StatusCode = strconv.Itoa(status.ErrOfServer)
 		resp.StatusMsg = "UID有误或服务器错误"
-		return resp, err
+		return resp, nil
 	}
 
 	//rpc
