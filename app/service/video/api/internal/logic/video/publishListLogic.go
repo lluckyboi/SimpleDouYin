@@ -4,7 +4,7 @@ import (
 	"SimpleDouYin/app/common/jwt"
 	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/status"
-	"SimpleDouYin/app/service/user/dao/model"
+	"SimpleDouYin/app/dao/model"
 	"SimpleDouYin/app/service/video/rpc/videosv"
 	"context"
 	"errors"
