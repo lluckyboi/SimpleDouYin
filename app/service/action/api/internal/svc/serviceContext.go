@@ -5,7 +5,7 @@ import (
 	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/middleware"
 	"SimpleDouYin/app/service/action/api/internal/config"
-	"SimpleDouYin/app/service/video/rpc/videosv"
+	"SimpleDouYin/app/service/action/rpc/action"
 	"github.com/go-redis/redis"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
@@ -20,10 +20,10 @@ type ServiceContext struct {
 	CORSMiddleware  rest.Middleware
 	LimitMiddleware rest.Middleware
 
-	JWTMap      *jwt.JWTMap
-	VideoClient videosv.VideoSv
-	RedisDB     *redis.Client
-	GormDB      *gorm.DB
+	JWTMap       *jwt.JWTMap
+	ActionClient action.Action
+	RedisDB      *redis.Client
+	GormDB       *gorm.DB
 }
 
 func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
@@ -33,10 +33,10 @@ func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
 	}
 
 	return &ServiceContext{
-		Config:      c,
-		JWTMap:      JWTMap,
-		VideoClient: videosv.NewVideoSv(zrpc.MustNewClient(c.ActionClient)),
-		GormDB:      db,
+		Config:       c,
+		JWTMap:       JWTMap,
+		ActionClient: action.NewAction(zrpc.MustNewClient(c.ActionClient)),
+		GormDB:       db,
 		RedisDB: redis.NewClient(&redis.Options{
 			Addr:     c.RedisDB.RHost,
 			Password: c.RedisDB.RPass,
