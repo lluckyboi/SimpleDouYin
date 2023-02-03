@@ -31,28 +31,60 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 	resp := new(pb.CommentResp)
 
 	if in.ActionType { //发布评论
+		//开始事务
+		tx := l.svcCtx.GormDB.Begin()
+		//插入记录
 		if err := l.svcCtx.GormDB.Create(&model.Comment{
 			UserID:     in.UserId,
 			CommentID:  in.CommentId,
 			Content:    in.CommentText,
 			CreateDate: time.Now(),
 		}); err != nil {
+			tx.Rollback()
 			log.Println("发布评论查询出错:", err.Error)
 			resp.StatusCode = status.ErrOfServer
 			resp.StatusMsg = status.InfoErrOfServer
 			return resp, nil
 		}
-		resp.StatusCode = status.SuccessCode
-		resp.StatusMsg = "发布评论成功"
-	} else { //删除评论
-		if err := l.svcCtx.GormDB.
-			Where("comment_id = ?", in.CommentId).
-			Delete(&model.Favorite{}); err != nil {
+		//更新video.comment_count
+		err := tx.Exec("UPDATE video SET comment_count=comment_count+1 where video_id = ?", in.VideoId)
+		if err != nil {
+			tx.Rollback()
 			logx.Info(err)
 			resp.StatusCode = status.ErrOfServer
 			resp.StatusMsg = status.InfoErrOfServer
 			return resp, nil
 		}
+		//提交事务
+		tx.Commit()
+
+		resp.StatusCode = status.SuccessCode
+		resp.StatusMsg = "发布评论成功"
+	} else { //删除评论
+		//开始事务
+		tx := l.svcCtx.GormDB.Begin()
+		//删除记录
+		if err := l.svcCtx.GormDB.
+			Where("comment_id = ?", in.CommentId).
+			Delete(&model.Favorite{}); err != nil {
+			tx.Rollback()
+			logx.Info(err)
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = status.InfoErrOfServer
+			return resp, nil
+		}
+		//更新video.comment_count
+		err := tx.Exec("UPDATE video SET comment_count=comment_count-1 where video_id = ?", in.VideoId)
+		if err != nil {
+			tx.Rollback()
+			logx.Info(err)
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = status.InfoErrOfServer
+			return resp, nil
+		}
+		//提交事务
+		tx.Commit()
+
 		resp.StatusCode = status.SuccessCode
 		resp.StatusMsg = "删除评论成功"
 	}
