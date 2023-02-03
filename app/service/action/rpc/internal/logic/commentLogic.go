@@ -4,6 +4,8 @@ import (
 	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/service/action/dao/model"
 	"context"
+	"errors"
+	"gorm.io/gorm"
 	"log"
 	"time"
 
@@ -38,7 +40,7 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 			UserID:     in.UserId,
 			Content:    in.CommentText,
 			CreateDate: time.Now(),
-		}); err != nil {
+		}); err != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
 			log.Println("发布评论查询出错:", err.Error)
 			resp.StatusCode = status.ErrOfServer
@@ -47,7 +49,7 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 		}
 		//更新video.comment_count
 		err := tx.Exec("UPDATE video SET comment_count=comment_count+1 where video_id = ?", in.VideoId)
-		if err != nil {
+		if err != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
 			logx.Info(err)
 			resp.StatusCode = status.ErrOfServer
@@ -65,7 +67,8 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 		//删除记录
 		if err := l.svcCtx.GormDB.
 			Where("comment_id = ?", in.CommentId).
-			Delete(&model.Favorite{}); err != nil {
+			Delete(&model.Favorite{}); err != nil &&
+			!errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
 			logx.Info(err)
 			resp.StatusCode = status.ErrOfServer
@@ -74,7 +77,7 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 		}
 		//更新video.comment_count
 		err := tx.Exec("UPDATE video SET comment_count=comment_count-1 where video_id = ?", in.VideoId)
-		if err != nil {
+		if err != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
 			logx.Info(err)
 			resp.StatusCode = status.ErrOfServer

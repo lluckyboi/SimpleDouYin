@@ -4,6 +4,8 @@ import (
 	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/service/action/dao/model"
 	"context"
+	"errors"
+	"gorm.io/gorm"
 	"log"
 
 	"SimpleDouYin/app/service/action/rpc/internal/svc"
@@ -37,9 +39,9 @@ func (l *FavoriteLogic) Favorite(in *pb.FavoriteReq) (*pb.FavoriteResp, error) {
 		if err := tx.Create(&model.Favorite{
 			UserID:  in.UserId,
 			VideoID: in.VideoId,
-		}); err != nil {
+		}); err != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
-			logx.Info(err)
+			logx.Info("创建失败", err)
 			resp.StatusCode = status.ErrOfServer
 			resp.StatusMsg = status.InfoErrOfServer
 			return resp, nil
@@ -47,7 +49,7 @@ func (l *FavoriteLogic) Favorite(in *pb.FavoriteReq) (*pb.FavoriteResp, error) {
 		log.Println("创建记录成功")
 		//更新video.favorite_count
 		err := tx.Exec("UPDATE video SET favorite_count=favorite_count+1 where video_id = ?", in.VideoId)
-		if err != nil {
+		if err != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
 			logx.Info(err)
 			resp.StatusCode = status.ErrOfServer
@@ -65,7 +67,8 @@ func (l *FavoriteLogic) Favorite(in *pb.FavoriteReq) (*pb.FavoriteResp, error) {
 		tx := l.svcCtx.GormDB.Begin()
 		//删除记录
 		if err := tx.Where("user_id = ? and video_id = ?", in.UserId, in.VideoId).
-			Delete(&model.Favorite{}); err != nil {
+			Delete(&model.Favorite{}); err != nil &&
+			!errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
 			logx.Info(err)
 			resp.StatusCode = status.ErrOfServer
@@ -74,7 +77,7 @@ func (l *FavoriteLogic) Favorite(in *pb.FavoriteReq) (*pb.FavoriteResp, error) {
 		}
 		//更新video.favorite_count
 		err := tx.Exec("UPDATE video SET favorite_count=favorite_count-1 where video_id = ?", in.VideoId)
-		if err != nil {
+		if err != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
 			logx.Info(err)
 			resp.StatusCode = status.ErrOfServer

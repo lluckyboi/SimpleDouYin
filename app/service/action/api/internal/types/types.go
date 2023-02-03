@@ -44,10 +44,10 @@ type Author struct {
 
 type CommentReq struct {
 	Token       string `form:"token"`
-	VideoId     string `form:"video"`
+	VideoId     string `form:"video_id"`
 	ActionType  string `form:"action_type"`
-	CommentText string `form:"comment_text"`
-	CommentId   string `form:"comment_id"`
+	CommentText string `form:"comment_text,optional"`
+	CommentId   string `form:"comment_id,optional"`
 }
 
 type CommentResp struct {
