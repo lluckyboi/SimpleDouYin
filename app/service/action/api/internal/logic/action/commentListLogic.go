@@ -59,5 +59,23 @@ func (l *CommentListLogic) CommentList(req *types.CommentListReq) (*types.Commen
 	}
 	resp.StatusCode = Grsp.StatusCode
 	resp.StatusMsg = Grsp.StatusMsg
+
+	ComList := Grsp.CommentList
+	for _, v := range ComList {
+		author := types.Author{
+			Id:            v.User.Id,
+			Name:          v.User.Name,
+			FollowCount:   v.User.FollowCount,
+			FollowerCount: v.User.FollowerCount,
+			IsFollow:      v.User.IsFollow,
+		}
+		com := types.Comment{
+			Id:         v.Id,
+			User:       author,
+			Content:    v.Content,
+			CreateDate: v.CreateDate,
+		}
+		resp.CommentList = append(resp.CommentList, com)
+	}
 	return resp, nil
 }

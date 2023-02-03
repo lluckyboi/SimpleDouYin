@@ -58,5 +58,27 @@ func (l *FavoriteListLogic) FavoriteList(req *types.FavoriteListReq) (*types.Fav
 	}
 	resp.StatusCode = strconv.Itoa(int(Grsp.StatusCode))
 	resp.StatusMsg = Grsp.StatusMsg
+
+	VideoList := Grsp.VideoList
+	for _, v := range VideoList {
+		author := types.Author{
+			Id:            v.Author.Id,
+			Name:          v.Author.Name,
+			FollowCount:   v.Author.FollowCount,
+			FollowerCount: v.Author.FollowerCount,
+			IsFollow:      v.Author.IsFollow,
+		}
+		video := types.Video{
+			Id:            v.Id,
+			Author:        author,
+			PlayUrl:       v.PlayUrl,
+			CoverUrl:      v.CoverUrl,
+			FavoriteCount: v.FavoriteCount,
+			CommentCount:  v.CommentCount,
+			IsFavorite:    v.IsFavorite,
+			Title:         v.Title,
+		}
+		resp.VideoList = append(resp.VideoList, video)
+	}
 	return resp, nil
 }
