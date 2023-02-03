@@ -3,7 +3,7 @@ package logic
 import (
 	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/common/tool"
-	"SimpleDouYin/app/dao/model"
+	"SimpleDouYin/app/service/action/dao/model"
 	"context"
 	"errors"
 	"gorm.io/gorm"

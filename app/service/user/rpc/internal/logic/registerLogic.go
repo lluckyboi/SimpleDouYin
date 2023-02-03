@@ -6,7 +6,7 @@ import (
 	"SimpleDouYin/app/common/snowFlake"
 	"SimpleDouYin/app/common/status"
 	"SimpleDouYin/app/common/tool"
-	"SimpleDouYin/app/dao/model"
+	"SimpleDouYin/app/service/user/dao/model"
 	"context"
 	"strconv"
 	"strings"
