@@ -87,7 +87,7 @@ func (l *FavoriteListLogic) FavoriteList(in *pb.FavoriteListReq) (*pb.FavoriteLi
 		log.Println("作者查询出错:", errr.Error)
 		resp.StatusCode = status.ErrOfServer
 		resp.StatusMsg = "服务器错误"
-		return resp, nil
+		return resp, err.Error
 	}
 	log.Println("作者查询成功:", usersTp)
 	//补全
@@ -119,7 +119,7 @@ func (l *FavoriteListLogic) FavoriteList(in *pb.FavoriteListReq) (*pb.FavoriteLi
 		log.Println("查询出错:", errr1.Error)
 		resp.StatusCode = status.ErrOfServer
 		resp.StatusMsg = "服务器错误"
-		return resp, nil
+		return resp, err.Error
 	}
 	for _, v := range Tfollows {
 		for ku, vu := range UIDS {
@@ -141,7 +141,7 @@ func (l *FavoriteListLogic) FavoriteList(in *pb.FavoriteListReq) (*pb.FavoriteLi
 		log.Println("查publish表错误", errr.Error)
 		resp.StatusCode = status.ErrOfServer
 		resp.StatusMsg = "服务器错误"
-		return resp, nil
+		return resp, err.Error
 	}
 
 	//整合成结果

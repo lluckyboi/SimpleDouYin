@@ -31,6 +31,7 @@ func NewCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CommentLo
 
 func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 	resp := new(pb.CommentResp)
+	resp.Comment = &pb.Comment{}
 
 	if in.ActionType { //发布评论
 		//开始事务

@@ -84,7 +84,7 @@ func (l *CommentLogic) Comment(req *types.CommentReq) (*types.CommentResp, error
 	if err != nil {
 		resp.StatusCode = status.ErrOfServer
 		resp.StatusMsg = status.InfoErrOfServer
-		logx.Error(err.Error())
+		log.Println("rpc err:", err)
 		return resp, nil
 	}
 	resp.StatusCode = Grsp.StatusCode
