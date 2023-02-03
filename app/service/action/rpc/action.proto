@@ -1,0 +1,72 @@
+syntax = "proto3";
+package action;
+option go_package = "./pb";
+
+//赞操作
+message FavoriteReq {
+  int64 UserId = 1;
+  int64 VideoId = 2;
+  bool ActionType = 3;
+}
+message FavoriteResp {
+  int32  StatusCode = 1;
+  string StatusMsg = 2;
+}
+
+//喜欢列表
+message FavoriteListReq {
+  int64 UserId = 1;
+}
+message FavoriteListResp {
+  int32  StatusCode = 1;
+  string StatusMsg = 2;
+  repeated Video VideoList = 4;
+}
+message Video{
+  int64 Id = 1;
+  Author Author = 2;
+  string PlayUrl = 3;
+  string CoverUrl = 4;
+  int64 FavoriteCount = 5;
+  int64 CommentCount = 6;
+  bool IsFavorite = 7;
+  string Title = 8;
+}
+message Author{
+  int64 Id = 1;
+  string Name = 2;
+  int64 FollowCount = 3;
+  int64 FollowerCount = 4;
+  bool IsFollow = 5;
+}
+
+//评论操作
+message CommentReq {
+  int64 UserId = 1;
+  int64 VideoId = 2;
+  bool ActionType = 3;
+  string CommentText = 4;
+  string CommentId = 5;
+}
+message CommentResp {
+  int32  StatusCode = 1;
+  string StatusMsg = 2;
+  Comment Comment = 3;
+}
+message Comment {
+  int64 Id = 1;
+  Author User = 2;
+  string Content = 3;
+  string CreateDate = 4;
+}
+
+//评论列表
+message CommentListReq {
+  int64 UserId = 1;
+  int64 VideoId = 2;
+}
+message CommentListResp {
+  int32  StatusCode = 1;
+  string StatusMsg = 2;
+  repeated Comment CommentList = 3;
+}
