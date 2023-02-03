@@ -18,6 +18,8 @@ const (
 	LimitKeyUserApi = "user_api"
 	// LimitKeyVideoApi redis限流key video的api服务
 	LimitKeyVideoApi = "video_api"
+	// LimitKeyActionApi redis限流key action的api服务
+	LimitKeyActionApi = "action_api"
 )
 
 const (
