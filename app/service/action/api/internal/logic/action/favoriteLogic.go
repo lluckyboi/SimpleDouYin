@@ -44,7 +44,7 @@ func (l *FavoriteLogic) Favorite(req *types.FavoriteReq) (*types.FavoriteResp, e
 		resp.StatusMsg = "VID有误或服务器错误"
 		return resp, nil
 	}
-	//校验ActionType
+	//校验ActionType 1-赞-true 2-取消-false
 	act, err := tool.AcTypeStringToBool(req.ActionType)
 	if err != nil {
 		resp.StatusCode = status.ErrUnknownAcType

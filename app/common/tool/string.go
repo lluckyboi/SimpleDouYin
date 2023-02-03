@@ -27,9 +27,9 @@ func FiledStringBuild(column string, IDs []int64) string {
 
 func AcTypeStringToBool(act string) (bool, error) {
 	switch act {
-	case "0":
-		return true, nil
 	case "1":
+		return true, nil
+	case "2":
 		return false, nil
 	default:
 		return true, errors.New("unknown ActionType")

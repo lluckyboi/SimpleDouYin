@@ -36,15 +36,16 @@ func (l *CommentLogic) Comment(req *types.CommentReq) (*types.CommentResp, error
 	if err != nil {
 		resp.StatusCode = status.ErrFailParseToken
 		resp.StatusMsg = "token解析失败"
-		logx.Error(err.Error())
+		log.Println(err)
 		return resp, nil
 	}
 
-	//校验ActionType 0-add-true 1-delete-false
+	//校验ActionType 1-add-true 2-delete-false
 	act, err := tool.AcTypeStringToBool(req.ActionType)
 	if err != nil {
 		resp.StatusCode = status.ErrUnknownAcType
 		resp.StatusMsg = "unknown ActionType"
+		log.Println(err)
 		return resp, nil
 	}
 
@@ -53,15 +54,17 @@ func (l *CommentLogic) Comment(req *types.CommentReq) (*types.CommentResp, error
 	if err != nil {
 		resp.StatusCode = status.ErrOfServer
 		resp.StatusMsg = "VID有误或服务器错误"
+		log.Println("解析video_id错误:", err)
 		return resp, nil
 	}
 
 	var cid int64 = 0
 	if !act {
-		cid, err = strconv.ParseInt(req.CommentId, 10, 64)
+		cid, err = strconv.ParseInt(req.CommentId, 10, 32)
 		if err != nil {
 			resp.StatusCode = status.ErrOfServer
 			resp.StatusMsg = "VID有误或服务器错误"
+			log.Println("解析comment_id错误", err)
 			return resp, nil
 		}
 	} else {
@@ -69,6 +72,7 @@ func (l *CommentLogic) Comment(req *types.CommentReq) (*types.CommentResp, error
 		if !tool.CommentLengthCheck(req.CommentText) {
 			resp.StatusCode = status.ErrLengthErr
 			resp.StatusMsg = "长度有误"
+			log.Println("长度校验错误", err)
 			return resp, nil
 		}
 	}
