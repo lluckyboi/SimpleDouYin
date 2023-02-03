@@ -11,7 +11,6 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 	"log"
-	"net/http"
 )
 
 type PublishListLogic struct {
@@ -44,7 +43,7 @@ func (l *PublishListLogic) PublishList(in *pb.PublishListReq) (*pb.PublishListRe
 		return resp, nil
 	}
 	if pubCount == 0 {
-		resp.StatusCode = http.StatusOK
+		resp.StatusCode = status.SuccessCode
 		resp.StatusMsg = "成功"
 		return resp, nil
 	}
