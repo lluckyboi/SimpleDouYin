@@ -96,10 +96,9 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 		//删除记录
 		if err := l.svcCtx.GormDB.
 			Where("comment_id = ?", in.CommentId).
-			Delete(&model.Favorite{}); err.Error != nil &&
-			!errors.Is(err.Error, gorm.ErrRecordNotFound) {
+			Delete(&model.Comment{}); err.Error != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
-			logx.Info(err)
+			log.Println("删除记录出错:", err.Error)
 			resp.StatusCode = status.ErrOfServer
 			resp.StatusMsg = status.InfoErrOfServer
 			return resp, nil
