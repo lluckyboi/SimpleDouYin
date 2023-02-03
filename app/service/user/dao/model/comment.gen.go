@@ -13,9 +13,10 @@ const TableNameComment = "comment"
 // Comment mapped from table <comment>
 type Comment struct {
 	UserID     int64     `gorm:"column:user_id;not null" json:"user_id"`
-	CommentID  int64     `gorm:"column:comment_id;primaryKey" json:"comment_id"`
+	CommentID  int64     `gorm:"column:comment_id;primaryKey;autoIncrement:true" json:"comment_id"`
 	Content    string    `gorm:"column:content;not null" json:"content"`
 	CreateDate time.Time `gorm:"column:create_date;not null" json:"create_date"`
+	VideoID    int64     `gorm:"column:video_id;not null" json:"video_id"`
 }
 
 // TableName Comment's table name

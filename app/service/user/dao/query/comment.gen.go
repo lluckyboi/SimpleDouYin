@@ -5,7 +5,6 @@
 package query
 
 import (
-	"SimpleDouYin/app/dao/model"
 	"context"
 
 	"gorm.io/gorm"
@@ -16,6 +15,8 @@ import (
 	"gorm.io/gen/field"
 
 	"gorm.io/plugin/dbresolver"
+
+	"SimpleDouYin/app/service/action/dao/model"
 )
 
 func newComment(db *gorm.DB) comment {
@@ -30,6 +31,7 @@ func newComment(db *gorm.DB) comment {
 	_comment.CommentID = field.NewInt64(tableName, "comment_id")
 	_comment.Content = field.NewString(tableName, "content")
 	_comment.CreateDate = field.NewTime(tableName, "create_date")
+	_comment.VideoID = field.NewInt64(tableName, "video_id")
 
 	_comment.fillFieldMap()
 
@@ -44,6 +46,7 @@ type comment struct {
 	CommentID  field.Int64
 	Content    field.String
 	CreateDate field.Time
+	VideoID    field.Int64
 
 	fieldMap map[string]field.Expr
 }
@@ -64,6 +67,7 @@ func (c *comment) updateTableName(table string) *comment {
 	c.CommentID = field.NewInt64(table, "comment_id")
 	c.Content = field.NewString(table, "content")
 	c.CreateDate = field.NewTime(table, "create_date")
+	c.VideoID = field.NewInt64(table, "video_id")
 
 	c.fillFieldMap()
 
@@ -86,11 +90,12 @@ func (c *comment) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *comment) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 4)
+	c.fieldMap = make(map[string]field.Expr, 5)
 	c.fieldMap["user_id"] = c.UserID
 	c.fieldMap["comment_id"] = c.CommentID
 	c.fieldMap["content"] = c.Content
 	c.fieldMap["create_date"] = c.CreateDate
+	c.fieldMap["video_id"] = c.VideoID
 }
 
 func (c comment) clone(db *gorm.DB) comment {

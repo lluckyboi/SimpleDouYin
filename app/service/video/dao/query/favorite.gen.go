@@ -5,7 +5,6 @@
 package query
 
 import (
-	"SimpleDouYin/app/dao/model"
 	"context"
 
 	"gorm.io/gorm"
@@ -16,6 +15,8 @@ import (
 	"gorm.io/gen/field"
 
 	"gorm.io/plugin/dbresolver"
+
+	"SimpleDouYin/app/service/action/dao/model"
 )
 
 func newFavorite(db *gorm.DB) favorite {
