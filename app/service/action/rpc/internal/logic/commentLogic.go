@@ -111,7 +111,7 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 		err := tx.Exec("UPDATE video SET comment_count=comment_count-1 where video_id = ?", in.VideoId)
 		if err.Error != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
-			logx.Info(err)
+			log.Println("更新评论数-1出错:", err.Error)
 			resp.StatusCode = status.ErrOfServer
 			resp.StatusMsg = status.InfoErrOfServer
 			return resp, nil
@@ -121,6 +121,22 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 
 		resp.StatusCode = status.SuccessCode
 		resp.StatusMsg = "删除评论成功"
+
+		author := &pb.Author{
+			Id:            0,
+			Name:          "",
+			FollowCount:   0,
+			FollowerCount: 0,
+			IsFollow:      false,
+		}
+		//写入结果
+		resCom := &pb.Comment{
+			Id:         0,
+			User:       author,
+			Content:    "",
+			CreateDate: "",
+		}
+		resp.Comment = resCom
 	}
 	return resp, nil
 }
