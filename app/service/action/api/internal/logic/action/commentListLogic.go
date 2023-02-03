@@ -1,7 +1,11 @@
 package action
 
 import (
+	"SimpleDouYin/app/common/jwt"
+	"SimpleDouYin/app/common/status"
+	"SimpleDouYin/app/service/action/rpc/action"
 	"context"
+	"strconv"
 
 	"SimpleDouYin/app/service/action/api/internal/svc"
 	"SimpleDouYin/app/service/action/api/internal/types"
@@ -23,8 +27,37 @@ func NewCommentListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Comme
 	}
 }
 
-func (l *CommentListLogic) CommentList(req *types.CommentListReq) (resp *types.CommentResp, err error) {
-	// todo: add your logic here and delete this line
+func (l *CommentListLogic) CommentList(req *types.CommentListReq) (*types.CommentListResp, error) {
+	resp := new(types.CommentListResp)
+	//解析token
+	claims, err := jwt.ParseToken(req.Token)
+	if err != nil {
+		resp.StatusCode = status.ErrFailParseToken
+		resp.StatusMsg = "token解析失败"
+		logx.Error(err.Error())
+		return resp, nil
+	}
 
-	return
+	//解析ID
+	vid, err := strconv.ParseInt(req.VideoId, 10, 64)
+	if err != nil {
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = "UID有误或服务器错误"
+		return resp, nil
+	}
+
+	//rpc
+	Grsp, err := l.svcCtx.ActionClient.CommentList(l.ctx, &action.CommentListReq{
+		UserId:  claims.UserId,
+		VideoId: vid,
+	})
+	if err != nil {
+		resp.StatusCode = status.ErrOfServer
+		resp.StatusMsg = status.InfoErrOfServer
+		logx.Error(err.Error())
+		return resp, nil
+	}
+	resp.StatusCode = Grsp.StatusCode
+	resp.StatusMsg = Grsp.StatusMsg
+	return resp, nil
 }
