@@ -40,7 +40,7 @@ func (l *CommentLogic) Comment(req *types.CommentReq) (*types.CommentResp, error
 		return resp, nil
 	}
 
-	//校验ActionType
+	//校验ActionType 0-add-true 1-delete-false
 	act, err := tool.AcTypeStringToBool(req.ActionType)
 	if err != nil {
 		resp.StatusCode = status.ErrUnknownAcType
@@ -57,7 +57,7 @@ func (l *CommentLogic) Comment(req *types.CommentReq) (*types.CommentResp, error
 	}
 
 	var cid int64 = 0
-	if act {
+	if !act {
 		cid, err = strconv.ParseInt(req.CommentId, 10, 64)
 		if err != nil {
 			resp.StatusCode = status.ErrOfServer
