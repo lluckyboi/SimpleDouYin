@@ -1,7 +1,11 @@
 package logic
 
 import (
+	"SimpleDouYin/app/common/status"
+	"SimpleDouYin/app/dao/model"
 	"context"
+	"log"
+	"time"
 
 	"SimpleDouYin/app/service/action/rpc/internal/svc"
 	"SimpleDouYin/app/service/action/rpc/pb"
@@ -24,7 +28,33 @@ func NewCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CommentLo
 }
 
 func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
-	// todo: add your logic here and delete this line
+	resp := new(pb.CommentResp)
 
-	return &pb.CommentResp{}, nil
+	if in.ActionType { //发布评论
+		if err := l.svcCtx.GormDB.Create(&model.Comment{
+			UserID:     in.UserId,
+			CommentID:  in.CommentId,
+			Content:    in.CommentText,
+			CreateDate: time.Now(),
+		}); err != nil {
+			log.Println("发布评论查询出错:", err.Error)
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = status.InfoErrOfServer
+			return resp, nil
+		}
+		resp.StatusCode = status.SuccessCode
+		resp.StatusMsg = "发布评论成功"
+	} else { //删除评论
+		if err := l.svcCtx.GormDB.
+			Where("comment_id = ?", in.CommentId).
+			Delete(&model.Favorite{}); err != nil {
+			logx.Info(err)
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = status.InfoErrOfServer
+			return resp, nil
+		}
+		resp.StatusCode = status.SuccessCode
+		resp.StatusMsg = "删除评论成功"
+	}
+	return resp, nil
 }
