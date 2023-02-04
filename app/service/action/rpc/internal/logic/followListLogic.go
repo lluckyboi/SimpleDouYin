@@ -34,7 +34,7 @@ func (l *FollowListLogic) FollowList(in *pb.FollowListReq) (*pb.FollowListResp, 
 
 	//查询关注列表
 	var (
-		follows []model.Favorite
+		follows []model.Follow
 		foCt    int64
 	)
 
@@ -60,7 +60,7 @@ func (l *FollowListLogic) FollowList(in *pb.FollowListReq) (*pb.FollowListResp, 
 		UIDS  []int64
 	)
 	for idx := 0; int64(idx) < foCt; idx++ {
-		UIDS = append(UIDS, follows[idx].UserID)
+		UIDS = append(UIDS, follows[idx].TargetUID)
 	}
 
 	err = l.svcCtx.GormDB.Where("user_id in ?", UIDS).

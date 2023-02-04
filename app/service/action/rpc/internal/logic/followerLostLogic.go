@@ -34,7 +34,7 @@ func (l *FollowerLostLogic) FollowerLost(in *pb.FollowerListReq) (*pb.FollowerLi
 
 	//查询关注列表
 	var (
-		follows []model.Favorite
+		follows []model.Follow
 		foCt    int64
 	)
 
@@ -60,7 +60,7 @@ func (l *FollowerLostLogic) FollowerLost(in *pb.FollowerListReq) (*pb.FollowerLi
 		UIDS  []int64
 	)
 	for idx := 0; int64(idx) < foCt; idx++ {
-		UIDS = append(UIDS, follows[idx].UserID)
+		UIDS = append(UIDS, follows[idx].UID)
 	}
 
 	err = l.svcCtx.GormDB.Where("user_id in ?", UIDS).
