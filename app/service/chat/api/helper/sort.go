@@ -1,22 +1,16 @@
-package tool
+package helper
 
-import "time"
+import (
+	"SimpleDouYin/app/service/chat/dao/model"
+)
 
-type Message struct {
-	ID         int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	Content    string    `gorm:"column:content;not null" json:"content"`
-	CreateTime time.Time `gorm:"column:create_time;not null" json:"create_time"`
-	UID        int64     `gorm:"column:uid;not null" json:"uid"`
-	TargetUID  int64     `gorm:"column:target_uid;not null" json:"target_uid"`
-}
-
-func SortMessageByDate(arr1, arr2 []Message) []Message {
+func SortMessageByDate(arr1, arr2 []model.Message) []model.Message {
 	var (
 		l1   = len(arr1)
 		l2   = len(arr2)
 		idx1 = 0
 		idx2 = 0
-		res  []Message
+		res  []model.Message
 	)
 	for {
 		//有一方全部插入，结束
