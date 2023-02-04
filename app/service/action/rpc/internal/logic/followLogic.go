@@ -99,7 +99,7 @@ func (l *FollowLogic) Follow(in *pb.FollowReq) (*pb.FollowResp, error) {
 
 		//删除记录
 		if err := tx.Where("uid = ? and target_uid = ?", in.UserId, in.TargetUserId).
-			Delete(&model.Favorite{}); err.Error != nil &&
+			Delete(&model.Follow{}); err.Error != nil &&
 			!errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
 			log.Println("删除记录失败:", err.Error)
