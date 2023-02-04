@@ -51,7 +51,7 @@ func (l *SendMsgLogic) SendMsg(req *types.SendMsgReq) (*types.SendMsgResp, error
 
 	//校验ActionType 1-关注-true 2-取消-false
 	act, err := tool.AcTypeStringToBool(req.ActionType)
-	if err != nil {
+	if err != nil || !act {
 		resp.StatusCode = status.ErrUnknownAcType
 		resp.StatusMsg = "unknown ActionType"
 		return resp, nil
