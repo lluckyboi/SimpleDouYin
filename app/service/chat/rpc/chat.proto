@@ -1,0 +1,36 @@
+syntax = "proto3";
+package action;
+option go_package = "./pb";
+
+//发送消息
+message SendMsgReq {
+  int64 UserId =1;
+  int64 TargetUserId=2;
+  bool ActionType=3;
+  string Content=4;
+}
+message SendMsgResp {
+  int32  StatusCode = 1;
+  string StatusMsg = 2;
+}
+
+//聊天记录
+message MsgRecordReq {
+  int64 UserId =1;
+  int64 TargetUserId =2;
+}
+message MsgRecordResp {
+  int32  StatusCode = 1;
+  string StatusMsg = 2;
+  repeated Msg MsgList=3;
+}
+message Msg {
+  int64 Id =1;
+  string Content =2;
+  string CreatTime =3;
+}
+
+service Chat {
+  rpc SendMsg(SendMsgReq) returns (SendMsgResp);
+  rpc MsgRecord(MsgRecordReq) returns (MsgRecordResp);
+}

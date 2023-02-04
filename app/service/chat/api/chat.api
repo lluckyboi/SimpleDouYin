@@ -1,9 +1,53 @@
 syntax = "v1"
 
 info(
-    title: "type title here"
-    desc: "type desc here"
-    author: "type author here"
-    email: "type email here"
-    version: "type version here"
+	title: "chat服务"
+	author: "luckyboi"
+	version: "v1.0"
 )
+
+//发送消息
+type (
+	SendMsgReq {
+		Token      string `form:"token"`
+		ToUserId   string `form:"to_user_id"`
+		ActionType string `form:"action_type"`
+		Content    string `form:"content"`
+	}
+	SendMsgResp {
+		StatusCode int32  `json:"status_code"`
+		TatusMsg   string `json:"status_msg"`
+	}
+)
+
+//聊天记录
+type (
+	MsgRecordReq {
+		Token    string `form:"token"`
+		ToUserId string `form:"to_user_id"`
+	}
+	MsgRecordResp {
+		StatusCode string    `json:"status_code"`
+		TatusMsg   string    `json:"status_msg"`
+		MsgList    []Message `json:"message_list"`
+	}
+	Message {
+		Id         int64  `json:"id"`
+		Content    string `json:"content"`
+		CreateTime string `json:"create_time"`
+	}
+)
+
+@server(
+	group : chat
+	middleware : CORSMiddleware,LimitMiddleware
+)
+service Chat {
+	@doc "发送消息"
+	@handler SendMsg
+	post /douyin/message/action (SendMsgReq) returns (SendMsgResp)
+	
+	@doc "聊天记录"
+	@handler MsgRecord
+	get /douyin/message/chat (MsgRecordReq) returns (MsgRecordResp)
+}
