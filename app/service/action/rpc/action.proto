@@ -16,6 +16,7 @@ message FavoriteResp {
 //喜欢列表
 message FavoriteListReq {
   int64 UserId = 1;
+  int64 CurUser = 2;
 }
 message FavoriteListResp {
   int32  StatusCode = 1;
@@ -85,6 +86,7 @@ message FollowResp {
 //关注列表
 message FollowListReq {
   int64 UserId=1;
+  int64 CurUser = 2;
 }
 message FollowListResp {
   int32  StatusCode = 1;
@@ -95,6 +97,7 @@ message FollowListResp {
 //粉丝列表
 message FollowerListReq{
   int64 UserId=1;
+  int64 CurUser = 2;
 }
 message FollowerListResp {
   int32  StatusCode = 1;
@@ -105,6 +108,7 @@ message FollowerListResp {
 //好友列表
 message FriendListReq {
   int64 UserId= 1;
+  int64 CurUser = 2;
 }
 message FriendListResp {
   int32  StatusCode = 1;
