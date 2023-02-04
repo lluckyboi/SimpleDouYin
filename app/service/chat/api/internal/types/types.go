@@ -20,7 +20,7 @@ type MsgRecordReq struct {
 
 type MsgRecordResp struct {
 	StatusCode string    `json:"status_code"`
-	TatusMsg   string    `json:"status_msg"`
+	StatusMsg  string    `json:"status_msg"`
 	MsgList    []Message `json:"message_list"`
 }
 
