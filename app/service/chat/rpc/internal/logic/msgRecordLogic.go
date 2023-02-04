@@ -35,19 +35,18 @@ func (l *MsgRecordLogic) MsgRecord(in *pb.MsgRecordReq) (*pb.MsgRecordResp, erro
 		msgs  []model.Message
 		msgCt int64
 	)
-	rst := l.svcCtx.GormDB.Where("(uid = ? and target_uid = ?)||(target_uid = ? and uid = ?)",
+	rst := l.svcCtx.GormDB.Where("(uid = ? and target_uid = ?) or (uid = ? and target_uid = ?)",
 		in.UserId, in.TargetUserId, in.TargetUserId, in.UserId).
 		Order("create_time desc").
 		Find(&msgs).
 		Count(&msgCt)
 	if rst.Error != nil && !errors.Is(rst.Error, gorm.ErrRecordNotFound) {
-		log.Println("聊天记录查询出错:", rst.Error, " count:", msgCt)
+		log.Println("聊天记录查询1出错:", rst.Error, " count:", msgCt)
 		resp.StatusCode = status.ErrOfServer
 		resp.StatusMsg = status.InfoErrOfServer
 		return resp, nil
 	}
 
-	//整合结果
 	for i := 0; int64(i) < msgCt; i++ {
 		msg := &pb.Msg{
 			Id:        msgs[i].ID,
@@ -58,5 +57,6 @@ func (l *MsgRecordLogic) MsgRecord(in *pb.MsgRecordReq) (*pb.MsgRecordResp, erro
 	}
 	resp.StatusCode = status.SuccessCode
 	resp.StatusMsg = "获取聊天记录成功"
+	log.Println(resp)
 	return resp, nil
 }
