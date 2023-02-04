@@ -4,4 +4,11 @@ import "github.com/zeromicro/go-zero/zrpc"
 
 type Config struct {
 	zrpc.RpcServerConf
+	DB struct {
+		DataSource string
+	}
+	RedisDB struct {
+		RHost string
+		RPass string
+	}
 }
