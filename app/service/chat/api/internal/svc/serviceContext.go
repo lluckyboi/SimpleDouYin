@@ -20,10 +20,10 @@ type ServiceContext struct {
 	CORSMiddleware  rest.Middleware
 	LimitMiddleware rest.Middleware
 
-	JWTMap       *jwt.JWTMap
-	ActionClient chat.Chat
-	RedisDB      *redis.Client
-	GormDB       *gorm.DB
+	JWTMap     *jwt.JWTMap
+	ChatClient chat.Chat
+	RedisDB    *redis.Client
+	GormDB     *gorm.DB
 }
 
 func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
@@ -33,10 +33,10 @@ func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
 	}
 
 	return &ServiceContext{
-		Config:       c,
-		JWTMap:       JWTMap,
-		ActionClient: chat.NewChat(zrpc.MustNewClient(c.ChatClient)),
-		GormDB:       db,
+		Config:     c,
+		JWTMap:     JWTMap,
+		ChatClient: chat.NewChat(zrpc.MustNewClient(c.ChatClient)),
+		GormDB:     db,
 		RedisDB: redis.NewClient(&redis.Options{
 			Addr:     c.RedisDB.RHost,
 			Password: c.RedisDB.RPass,
