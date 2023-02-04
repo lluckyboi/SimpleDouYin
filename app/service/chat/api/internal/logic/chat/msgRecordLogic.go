@@ -58,7 +58,7 @@ func (l *MsgRecordLogic) MsgRecord(req *types.MsgRecordReq) (*types.MsgRecordRes
 		log.Print("关注rpc错误", err.Error())
 		return resp, nil
 	}
-	resp.StatusCode = string(Grsp.StatusCode)
+	resp.StatusCode = "0"
 	resp.StatusMsg = Grsp.StatusMsg
 
 	//msg list
