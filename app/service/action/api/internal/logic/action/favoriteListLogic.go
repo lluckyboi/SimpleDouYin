@@ -31,7 +31,7 @@ func NewFavoriteListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Favo
 func (l *FavoriteListLogic) FavoriteList(req *types.FavoriteListReq) (*types.FavoriteListResp, error) {
 	resp := new(types.FavoriteListResp)
 	//解析token
-	_, err := jwt.ParseToken(req.Token)
+	calims, err := jwt.ParseToken(req.Token)
 	if err != nil {
 		resp.StatusCode = strconv.Itoa(status.ErrFailParseToken)
 		resp.StatusMsg = "token解析失败"
@@ -49,7 +49,8 @@ func (l *FavoriteListLogic) FavoriteList(req *types.FavoriteListReq) (*types.Fav
 
 	//rpc
 	Grsp, err := l.svcCtx.ActionClient.FavoriteList(l.ctx, &action.FavoriteListReq{
-		UserId: uid,
+		UserId:  uid,
+		CurUser: calims.UserId,
 	})
 	if err != nil {
 		resp.StatusCode = strconv.Itoa(status.ErrOfServer)

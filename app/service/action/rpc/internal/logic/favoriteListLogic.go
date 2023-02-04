@@ -127,7 +127,7 @@ func (l *FavoriteListLogic) FavoriteList(in *pb.FavoriteListReq) (*pb.FavoriteLi
 	}
 
 	errr1 := l.svcCtx.GormDB.
-		Where("uid = ? and target_uid in ?", in.UserId, UIDS).
+		Where("uid = ? and target_uid in ?", in.CurUser, UIDS).
 		Find(&Tfollows)
 	if errr1.Error != nil && (!errors.Is(errr1.Error, gorm.ErrRecordNotFound)) {
 		log.Println("查询出错:", errr1.Error)
