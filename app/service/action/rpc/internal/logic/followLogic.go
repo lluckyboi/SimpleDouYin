@@ -58,7 +58,7 @@ func (l *FollowLogic) Follow(in *pb.FollowReq) (*pb.FollowResp, error) {
 		if err := tx.Create(&model.Follow{
 			UID:       in.UserId,
 			TargetUID: in.TargetUserId,
-		}); err != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
+		}); err.Error != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
 			logx.Info("创建失败", err)
 			resp.StatusCode = status.ErrOfServer
