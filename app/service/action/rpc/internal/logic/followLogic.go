@@ -109,6 +109,7 @@ func (l *FollowLogic) Follow(in *pb.FollowReq) (*pb.FollowResp, error) {
 		}
 
 		//更新user.follower_count
+		log.Println("开始更新user.follower_count-1", in.TargetUserId)
 		err := tx.Exec("UPDATE user SET follower_count=user.follower_count-1 where user_id = ?", in.TargetUserId)
 		if err.Error != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
@@ -118,7 +119,8 @@ func (l *FollowLogic) Follow(in *pb.FollowReq) (*pb.FollowResp, error) {
 			return resp, err.Error
 		}
 		//更新user.follow_count
-		err = tx.Exec("UPDATE user SET follow_count=user.follow_count+1 where user_id = ?", in.UserId)
+		log.Println("开始更新user.follow_count-1", in.UserId)
+		err = tx.Exec("UPDATE user SET follow_count=user.follow_count-1 where user_id = ?", in.UserId)
 		if err.Error != nil && !errors.Is(err.Error, gorm.ErrRecordNotFound) {
 			tx.Rollback()
 			logx.Info(err)
