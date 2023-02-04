@@ -133,7 +133,7 @@ func (l *FollowLogic) Follow(in *pb.FollowReq) (*pb.FollowResp, error) {
 		log.Println("事务结束")
 
 		resp.StatusCode = status.SuccessCode
-		resp.StatusMsg = "取消点赞成功"
+		resp.StatusMsg = "取消关注成功"
 	}
 	return resp, nil
 }
