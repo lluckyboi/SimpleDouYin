@@ -45,7 +45,7 @@ func (l *SendMsgLogic) SendMsg(req *types.SendMsgReq) (*types.SendMsgResp, error
 	tuid, err := strconv.ParseInt(req.ToUserId, 10, 64)
 	if err != nil {
 		resp.StatusCode = status.ErrOfServer
-		resp.StatusMsg = "VID有误或服务器错误"
+		resp.StatusMsg = "ID有误或服务器错误"
 		return resp, nil
 	}
 
