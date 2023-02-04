@@ -20,6 +20,8 @@ const (
 	LimitKeyVideoApi = "video_api"
 	// LimitKeyActionApi redis限流key action的api服务
 	LimitKeyActionApi = "action_api"
+	// LimitKeyChatApi redis限流key chat的api服务
+	LimitKeyChatApi = "chat_api"
 )
 
 const (
