@@ -23,6 +23,14 @@ type (
 	FavoriteListResp = pb.FavoriteListResp
 	FavoriteReq      = pb.FavoriteReq
 	FavoriteResp     = pb.FavoriteResp
+	FollowListReq    = pb.FollowListReq
+	FollowListResp   = pb.FollowListResp
+	FollowReq        = pb.FollowReq
+	FollowResp       = pb.FollowResp
+	FollowerListReq  = pb.FollowerListReq
+	FollowerListResp = pb.FollowerListResp
+	FriendListReq    = pb.FriendListReq
+	FriendListResp   = pb.FriendListResp
 	Video            = pb.Video
 
 	Action interface {
@@ -30,6 +38,10 @@ type (
 		FavoriteList(ctx context.Context, in *FavoriteListReq, opts ...grpc.CallOption) (*FavoriteListResp, error)
 		Comment(ctx context.Context, in *CommentReq, opts ...grpc.CallOption) (*CommentResp, error)
 		CommentList(ctx context.Context, in *CommentListReq, opts ...grpc.CallOption) (*CommentListResp, error)
+		Follow(ctx context.Context, in *FollowReq, opts ...grpc.CallOption) (*FollowResp, error)
+		FollowList(ctx context.Context, in *FollowListReq, opts ...grpc.CallOption) (*FollowListResp, error)
+		FollowerLost(ctx context.Context, in *FollowerListReq, opts ...grpc.CallOption) (*FollowerListResp, error)
+		FriendList(ctx context.Context, in *FriendListReq, opts ...grpc.CallOption) (*FriendListResp, error)
 	}
 
 	defaultAction struct {
@@ -61,4 +73,24 @@ func (m *defaultAction) Comment(ctx context.Context, in *CommentReq, opts ...grp
 func (m *defaultAction) CommentList(ctx context.Context, in *CommentListReq, opts ...grpc.CallOption) (*CommentListResp, error) {
 	client := pb.NewActionClient(m.cli.Conn())
 	return client.CommentList(ctx, in, opts...)
+}
+
+func (m *defaultAction) Follow(ctx context.Context, in *FollowReq, opts ...grpc.CallOption) (*FollowResp, error) {
+	client := pb.NewActionClient(m.cli.Conn())
+	return client.Follow(ctx, in, opts...)
+}
+
+func (m *defaultAction) FollowList(ctx context.Context, in *FollowListReq, opts ...grpc.CallOption) (*FollowListResp, error) {
+	client := pb.NewActionClient(m.cli.Conn())
+	return client.FollowList(ctx, in, opts...)
+}
+
+func (m *defaultAction) FollowerLost(ctx context.Context, in *FollowerListReq, opts ...grpc.CallOption) (*FollowerListResp, error) {
+	client := pb.NewActionClient(m.cli.Conn())
+	return client.FollowerLost(ctx, in, opts...)
+}
+
+func (m *defaultAction) FriendList(ctx context.Context, in *FriendListReq, opts ...grpc.CallOption) (*FriendListResp, error) {
+	client := pb.NewActionClient(m.cli.Conn())
+	return client.FriendList(ctx, in, opts...)
 }

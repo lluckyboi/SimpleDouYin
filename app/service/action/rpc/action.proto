@@ -71,9 +71,54 @@ message CommentListResp {
   repeated Comment CommentList = 3;
 }
 
+//关注操作
+message FollowReq {
+  int64 UserId=1;
+  int64 TargetUserId  =2;
+  bool ActionType = 3;
+}
+message FollowResp {
+  int32  StatusCode = 1;
+  string StatusMsg = 2;
+}
+
+//关注列表
+message FollowListReq {
+  int64 UserId=1;
+}
+message FollowListResp {
+  int32  StatusCode = 1;
+  string StatusMsg = 2;
+  repeated Author UserList = 3;
+}
+
+//粉丝列表
+message FollowerListReq{
+  int64 UserId=1;
+}
+message FollowerListResp {
+  int32  StatusCode = 1;
+  string StatusMsg = 2;
+  repeated Author UserList = 3;
+}
+
+//好友列表
+message FriendListReq {
+  int64 UserId= 1;
+}
+message FriendListResp {
+  int32  StatusCode = 1;
+  string StatusMsg = 2;
+  repeated Author UserList = 3;
+}
+
 service Action{
   rpc Favorite(FavoriteReq) returns (FavoriteResp);
   rpc FavoriteList(FavoriteListReq) returns (FavoriteListResp);
   rpc Comment(CommentReq) returns (CommentResp);
   rpc CommentList(CommentListReq) returns (CommentListResp);
+  rpc Follow(FollowReq) returns (FollowResp);
+  rpc FollowList(FollowListReq) returns (FollowListResp);
+  rpc FollowerLost(FollowerListReq) returns (FollowerListResp);
+  rpc FriendList(FriendListReq) returns (FriendListResp);
 }

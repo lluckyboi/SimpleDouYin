@@ -26,6 +26,10 @@ type ActionClient interface {
 	FavoriteList(ctx context.Context, in *FavoriteListReq, opts ...grpc.CallOption) (*FavoriteListResp, error)
 	Comment(ctx context.Context, in *CommentReq, opts ...grpc.CallOption) (*CommentResp, error)
 	CommentList(ctx context.Context, in *CommentListReq, opts ...grpc.CallOption) (*CommentListResp, error)
+	Follow(ctx context.Context, in *FollowReq, opts ...grpc.CallOption) (*FollowResp, error)
+	FollowList(ctx context.Context, in *FollowListReq, opts ...grpc.CallOption) (*FollowListResp, error)
+	FollowerLost(ctx context.Context, in *FollowerListReq, opts ...grpc.CallOption) (*FollowerListResp, error)
+	FriendList(ctx context.Context, in *FriendListReq, opts ...grpc.CallOption) (*FriendListResp, error)
 }
 
 type actionClient struct {
@@ -72,6 +76,42 @@ func (c *actionClient) CommentList(ctx context.Context, in *CommentListReq, opts
 	return out, nil
 }
 
+func (c *actionClient) Follow(ctx context.Context, in *FollowReq, opts ...grpc.CallOption) (*FollowResp, error) {
+	out := new(FollowResp)
+	err := c.cc.Invoke(ctx, "/action.Action/Follow", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *actionClient) FollowList(ctx context.Context, in *FollowListReq, opts ...grpc.CallOption) (*FollowListResp, error) {
+	out := new(FollowListResp)
+	err := c.cc.Invoke(ctx, "/action.Action/FollowList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *actionClient) FollowerLost(ctx context.Context, in *FollowerListReq, opts ...grpc.CallOption) (*FollowerListResp, error) {
+	out := new(FollowerListResp)
+	err := c.cc.Invoke(ctx, "/action.Action/FollowerLost", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *actionClient) FriendList(ctx context.Context, in *FriendListReq, opts ...grpc.CallOption) (*FriendListResp, error) {
+	out := new(FriendListResp)
+	err := c.cc.Invoke(ctx, "/action.Action/FriendList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ActionServer is the server API for Action service.
 // All implementations must embed UnimplementedActionServer
 // for forward compatibility
@@ -80,6 +120,10 @@ type ActionServer interface {
 	FavoriteList(context.Context, *FavoriteListReq) (*FavoriteListResp, error)
 	Comment(context.Context, *CommentReq) (*CommentResp, error)
 	CommentList(context.Context, *CommentListReq) (*CommentListResp, error)
+	Follow(context.Context, *FollowReq) (*FollowResp, error)
+	FollowList(context.Context, *FollowListReq) (*FollowListResp, error)
+	FollowerLost(context.Context, *FollowerListReq) (*FollowerListResp, error)
+	FriendList(context.Context, *FriendListReq) (*FriendListResp, error)
 	mustEmbedUnimplementedActionServer()
 }
 
@@ -98,6 +142,18 @@ func (UnimplementedActionServer) Comment(context.Context, *CommentReq) (*Comment
 }
 func (UnimplementedActionServer) CommentList(context.Context, *CommentListReq) (*CommentListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CommentList not implemented")
+}
+func (UnimplementedActionServer) Follow(context.Context, *FollowReq) (*FollowResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Follow not implemented")
+}
+func (UnimplementedActionServer) FollowList(context.Context, *FollowListReq) (*FollowListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FollowList not implemented")
+}
+func (UnimplementedActionServer) FollowerLost(context.Context, *FollowerListReq) (*FollowerListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FollowerLost not implemented")
+}
+func (UnimplementedActionServer) FriendList(context.Context, *FriendListReq) (*FriendListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FriendList not implemented")
 }
 func (UnimplementedActionServer) mustEmbedUnimplementedActionServer() {}
 
@@ -184,6 +240,78 @@ func _Action_CommentList_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Action_Follow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FollowReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ActionServer).Follow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/action.Action/Follow",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ActionServer).Follow(ctx, req.(*FollowReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Action_FollowList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FollowListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ActionServer).FollowList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/action.Action/FollowList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ActionServer).FollowList(ctx, req.(*FollowListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Action_FollowerLost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FollowerListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ActionServer).FollowerLost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/action.Action/FollowerLost",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ActionServer).FollowerLost(ctx, req.(*FollowerListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Action_FriendList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FriendListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ActionServer).FriendList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/action.Action/FriendList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ActionServer).FriendList(ctx, req.(*FriendListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Action_ServiceDesc is the grpc.ServiceDesc for Action service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +334,22 @@ var Action_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CommentList",
 			Handler:    _Action_CommentList_Handler,
+		},
+		{
+			MethodName: "Follow",
+			Handler:    _Action_Follow_Handler,
+		},
+		{
+			MethodName: "FollowList",
+			Handler:    _Action_FollowList_Handler,
+		},
+		{
+			MethodName: "FollowerLost",
+			Handler:    _Action_FollowerLost_Handler,
+		},
+		{
+			MethodName: "FriendList",
+			Handler:    _Action_FriendList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

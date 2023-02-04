@@ -41,3 +41,23 @@ func (s *ActionServer) CommentList(ctx context.Context, in *pb.CommentListReq) (
 	l := logic.NewCommentListLogic(ctx, s.svcCtx)
 	return l.CommentList(in)
 }
+
+func (s *ActionServer) Follow(ctx context.Context, in *pb.FollowReq) (*pb.FollowResp, error) {
+	l := logic.NewFollowLogic(ctx, s.svcCtx)
+	return l.Follow(in)
+}
+
+func (s *ActionServer) FollowList(ctx context.Context, in *pb.FollowListReq) (*pb.FollowListResp, error) {
+	l := logic.NewFollowListLogic(ctx, s.svcCtx)
+	return l.FollowList(in)
+}
+
+func (s *ActionServer) FollowerLost(ctx context.Context, in *pb.FollowerListReq) (*pb.FollowerListResp, error) {
+	l := logic.NewFollowerLostLogic(ctx, s.svcCtx)
+	return l.FollowerLost(in)
+}
+
+func (s *ActionServer) FriendList(ctx context.Context, in *pb.FriendListReq) (*pb.FriendListResp, error) {
+	l := logic.NewFriendListLogic(ctx, s.svcCtx)
+	return l.FriendList(in)
+}
