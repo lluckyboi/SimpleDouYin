@@ -10,7 +10,7 @@ type SendMsgReq struct {
 
 type SendMsgResp struct {
 	StatusCode int32  `json:"status_code"`
-	TatusMsg   string `json:"status_msg"`
+	StatusMsg  string `json:"status_msg"`
 }
 
 type MsgRecordReq struct {
