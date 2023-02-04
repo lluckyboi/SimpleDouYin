@@ -28,7 +28,8 @@ func NewMsgRecordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *MsgReco
 	}
 }
 
-func (l *MsgRecordLogic) MsgRecord(req *types.MsgRecordReq) (resp *types.MsgRecordResp, err error) {
+func (l *MsgRecordLogic) MsgRecord(req *types.MsgRecordReq) (*types.MsgRecordResp, error) {
+	resp := new(types.MsgRecordResp)
 	//解析token
 	claims, err := jwt.ParseToken(req.Token)
 	if err != nil {
@@ -57,7 +58,7 @@ func (l *MsgRecordLogic) MsgRecord(req *types.MsgRecordReq) (resp *types.MsgReco
 		log.Print("关注rpc错误", err.Error())
 		return resp, nil
 	}
-	resp.StatusCode = strconv.Itoa(int(Grsp.StatusCode))
+	resp.StatusCode = string(Grsp.StatusCode)
 	resp.StatusMsg = Grsp.StatusMsg
 
 	//msg list
