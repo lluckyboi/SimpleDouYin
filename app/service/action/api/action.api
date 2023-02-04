@@ -84,6 +84,58 @@ type (
 	}
 )
 
+//关注
+type (
+	FollowReq {
+		Token      string `form:"token""`
+		ToUserId   string `form:"to_user_id"`
+		ActionType string `form:"action_type"`
+	}
+	FollowResp {
+		StatusCode int32  `json:"status_code"`
+		StatusMsg  string `json:"status_msg"`
+	}
+)
+
+//关注列表
+type (
+	FollowListReq {
+		Token  string `form:"token""`
+		UserID string `form:"user_id"`
+	}
+	FollowListResp {
+		StatusCode string   `json:"status_code"`
+		StatusMsg  string   `json:"status_msg"`
+		UserList   []Author `json:"user_list"`
+	}
+)
+
+//粉丝列表
+type (
+	FollowerListReq {
+		Token  string `form:"token""`
+		UserID string `form:"user_id"`
+	}
+	FollowerListResp {
+		StatusCode string   `json:"status_code"`
+		StatusMsg  string   `json:"status_msg"`
+		UserList   []Author `json:"user_list"`
+	}
+)
+
+//好友列表
+type (
+	FriendListReq {
+		Token  string `form:"token""`
+		UserID string `form:"user_id"`
+	}
+	FriendListResp {
+		StatusCode string   `json:"status_code"`
+		StatusMsg  string   `json:"status_msg"`
+		UserList   []Author `json:"user_list"`
+	}
+)
+
 @server(
 	group : action
 	middleware : CORSMiddleware,LimitMiddleware
@@ -104,4 +156,20 @@ service Action {
 	@doc "评论列表"
 	@handler CommentList
 	get /douyin/comment/list (CommentListReq) returns (CommentListResp)
+	
+	@doc "关注操作"
+	@handler Follow
+	post /douyin/relation/action(FollowReq) returns (FollowResp)
+	
+	@doc "关注列表"
+	@handler FollowList
+	get /douyin/relation/follow/list(FollowListReq) returns (FollowListResp)
+	
+	@doc "粉丝列表"
+	@handler FollowerList
+	get /douyin/relation/follower/list(FollowerListReq) returns (FollowerListResp)
+	
+	@doc "好友列表"
+	@handler FriendList
+	get /douyin/relation/friend/list(FriendListReq) returns (FriendListResp)
 }

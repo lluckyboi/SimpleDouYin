@@ -73,3 +73,47 @@ type CommentListResp struct {
 	StatusMsg   string    `json:"status_msg"`
 	CommentList []Comment `json:"comment_list"`
 }
+
+type FollowReq struct {
+	Token      string `form:"token""`
+	ToUserId   string `form:"to_user_id"`
+	ActionType string `form:"action_type"`
+}
+
+type FollowResp struct {
+	StatusCode int32  `json:"status_code"`
+	StatusMsg  string `json:"status_msg"`
+}
+
+type FollowListReq struct {
+	Token  string `form:"token""`
+	UserID string `form:"user_id"`
+}
+
+type FollowListResp struct {
+	StatusCode string   `json:"status_code"`
+	StatusMsg  string   `json:"status_msg"`
+	UserList   []Author `json:"user_list"`
+}
+
+type FollowerListReq struct {
+	Token  string `form:"token""`
+	UserID string `form:"user_id"`
+}
+
+type FollowerListResp struct {
+	StatusCode string   `json:"status_code"`
+	StatusMsg  string   `json:"status_msg"`
+	UserList   []Author `json:"user_list"`
+}
+
+type FriendListReq struct {
+	Token  string `form:"token""`
+	UserID string `form:"user_id"`
+}
+
+type FriendListResp struct {
+	StatusCode string   `json:"status_code"`
+	StatusMsg  string   `json:"status_msg"`
+	UserList   []Author `json:"user_list"`
+}
