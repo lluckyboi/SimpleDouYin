@@ -1,3 +1,5 @@
+/app/service/user/api/etc/user.yaml
+/app/common/password.go
 *.yaml
 *.xml
 *.iml
