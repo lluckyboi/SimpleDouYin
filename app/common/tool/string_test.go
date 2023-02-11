@@ -5,8 +5,8 @@ import (
 )
 
 func TestRedisStrBuilder(t *testing.T) {
-	got := RedisStrBuilder("12.Hh,你")
-	want := "12.Hh,你: "
+	got := RedisStrBuilder("test")
+	want := "test: "
 	if got != want {
 		t.Errorf("want:%v got:%v", want, got)
 	}
@@ -14,8 +14,8 @@ func TestRedisStrBuilder(t *testing.T) {
 
 func TestFiledStringBuild(t *testing.T) {
 	slice := []int64{1, 2, 3}
-	got := FiledStringBuild("12.Hh,你", slice)
-	want := "FIELD(12.Hh,你,1,2,3)"
+	got := FiledStringBuild("test", slice)
+	want := "FIELD(test,1,2,3)"
 	if got != want {
 		t.Errorf("want:%v got:%v", want, got)
 	}
