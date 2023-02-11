@@ -37,7 +37,7 @@ func (l *MsgRecordLogic) MsgRecord(in *pb.MsgRecordReq) (*pb.MsgRecordResp, erro
 	)
 	rst := l.svcCtx.GormDB.Where("(uid = ? and target_uid = ?) or (uid = ? and target_uid = ?)",
 		in.UserId, in.TargetUserId, in.TargetUserId, in.UserId).
-		Order("create_time desc").
+		Order("create_time asc").
 		Find(&msgs).
 		Count(&msgCt)
 	if rst.Error != nil && !errors.Is(rst.Error, gorm.ErrRecordNotFound) {
@@ -49,9 +49,11 @@ func (l *MsgRecordLogic) MsgRecord(in *pb.MsgRecordReq) (*pb.MsgRecordResp, erro
 
 	for i := 0; int64(i) < msgCt; i++ {
 		msg := &pb.Msg{
-			Id:        msgs[i].ID,
-			Content:   msgs[i].Content,
-			CreatTime: msgs[i].CreateTime.Format("2006-01-02 15-01-05"),
+			Id:         msgs[i].ID,
+			Content:    msgs[i].Content,
+			CreatTime:  msgs[i].CreateTime.Unix(),
+			FromUserId: msgs[i].UID,
+			ToUserId:   msgs[i].TargetUID,
 		}
 		resp.MsgList = append(resp.MsgList, msg)
 	}

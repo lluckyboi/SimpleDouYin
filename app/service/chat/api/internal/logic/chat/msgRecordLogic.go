@@ -68,6 +68,8 @@ func (l *MsgRecordLogic) MsgRecord(req *types.MsgRecordReq) (*types.MsgRecordRes
 			Id:         v.Id,
 			Content:    v.Content,
 			CreateTime: v.CreatTime,
+			FromUserId: v.FromUserId,
+			ToUserId:   v.ToUserId,
 		}
 		resp.MsgList = append(resp.MsgList, msg)
 	}

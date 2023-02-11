@@ -27,7 +27,9 @@ message MsgRecordResp {
 message Msg {
   int64 Id =1;
   string Content =2;
-  string CreatTime =3;
+  int64 CreatTime =3;
+  int64 FromUserId =4;
+  int64 ToUserId = 5;
 }
 
 service Chat {
