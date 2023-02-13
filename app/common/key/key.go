@@ -29,4 +29,6 @@ const (
 	MAXBytes = 50 * 1024 * 1024
 	// FeedNum Feed视频流一次性返回的视频数
 	FeedNum = 10
+	// LogReadBuffer 日志buffer
+	LogReadBuffer = 5000
 )
