@@ -13,7 +13,7 @@ import (
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.CORSMiddleware, serverCtx.LimitMiddleware},
+			[]rest.Middleware{serverCtx.CORSMiddleware, serverCtx.LimitMiddleware, serverCtx.LogPusherMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodGet,

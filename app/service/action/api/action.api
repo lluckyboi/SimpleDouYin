@@ -138,7 +138,7 @@ type (
 
 @server(
 	group : action
-	middleware : CORSMiddleware,LimitMiddleware
+	middleware : CORSMiddleware,LimitMiddleware,LogPusherMiddleware
 )
 service Action {
 	@doc "赞操作"

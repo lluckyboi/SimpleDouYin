@@ -42,7 +42,7 @@ type (
 
 @server(
 	group : chat
-	middleware : CORSMiddleware,LimitMiddleware
+	middleware : CORSMiddleware,LimitMiddleware,LogPusherMiddleware
 )
 service Chat {
 	@doc "发送消息"

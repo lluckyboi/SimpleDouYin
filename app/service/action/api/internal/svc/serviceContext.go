@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"SimpleDouYin/app/common"
 	"SimpleDouYin/app/common/jwt"
 	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/middleware"
@@ -17,8 +18,9 @@ import (
 type ServiceContext struct {
 	Config config.Config
 
-	CORSMiddleware  rest.Middleware
-	LimitMiddleware rest.Middleware
+	CORSMiddleware      rest.Middleware
+	LimitMiddleware     rest.Middleware
+	LogPusherMiddleware rest.Middleware
 
 	JWTMap       *jwt.JWTMap
 	ActionClient action.Action
@@ -42,7 +44,8 @@ func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
 			Password: c.RedisDB.RPass,
 			DB:       0, // use default DB
 		}),
-		CORSMiddleware:  middleware.NewCORSMiddleware().Handle,
-		LimitMiddleware: middleware.NewLimitMiddleware(key.LimitKeyActionApi, c.LimitKey.Seconds, c.LimitKey.Quota).Handle,
+		CORSMiddleware:      middleware.NewCORSMiddleware().Handle,
+		LimitMiddleware:     middleware.NewLimitMiddleware(key.LimitKeyActionApi, c.LimitKey.Seconds, c.LimitKey.Quota).Handle,
+		LogPusherMiddleware: middleware.NewLoggerPusher(common.MsgQHost, common.MsgQUser, common.MsgQPass).WithMsgQ,
 	}
 }

@@ -68,7 +68,7 @@ type (
 
 @server (
 	group: video
-	middleware: CORSMiddleware,LimitMiddleware
+	middleware: CORSMiddleware,LimitMiddleware,LogPusherMiddleware
 )
 service Video{
 	@doc "feed视频流"
