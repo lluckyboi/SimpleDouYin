@@ -30,5 +30,7 @@ const (
 	// FeedNum Feed视频流一次性返回的视频数
 	FeedNum = 10
 	// LogReadBuffer 日志buffer
-	LogReadBuffer = 5000
+	LogReadBuffer = 100
+	// LogMsgQueueName 日志队列名
+	LogMsgQueueName = "douyin_log"
 )

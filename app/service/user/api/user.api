@@ -45,7 +45,7 @@ type (
 
 @server (
 	group: login_register
-	middleware:	CORSMiddleware,LimitMiddleware
+	middleware:	CORSMiddleware,LimitMiddleware,LogPusherMiddleware
 )
 service User {
 	@doc "用户注册"
@@ -59,7 +59,7 @@ service User {
 
 @server (
 	group: user_info
-	middleware:	CORSMiddleware,LimitMiddleware
+	middleware:	CORSMiddleware,LimitMiddleware,LogPusherMiddleware
 )
 service User{
 	@doc "获取用户信息"

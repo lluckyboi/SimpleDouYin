@@ -5,6 +5,7 @@ import (
 	"SimpleDouYin/app/common/tool"
 	"github.com/streadway/amqp"
 	"go.uber.org/zap"
+	"log"
 	"net/http"
 	"time"
 )
@@ -16,7 +17,6 @@ type LoggerPusher struct {
 	MsgQUser string
 	MsgQPass string
 }
-type Ch *amqp.Channel
 
 func NewLoggerPusher(host, user, pass string) *LoggerPusher {
 	return &LoggerPusher{
@@ -26,9 +26,10 @@ func NewLoggerPusher(host, user, pass string) *LoggerPusher {
 	}
 }
 
-func (l *LoggerPusher) linkMsgQ() Ch {
+func (l *LoggerPusher) linkMsgQ() *amqp.Channel {
 	//连接RMQ
 	RMQConn, err := amqp.Dial("amqp://" + l.MsgQUser + ":" + l.MsgQPass + "@" + l.MsgQHost + "/")
+	log.Println("amqp://" + l.MsgQUser + ":" + l.MsgQPass + "@" + l.MsgQHost + "/")
 	if err != nil {
 		logger.Error("link RMQ err", zap.Error(err))
 		return nil
@@ -45,33 +46,47 @@ func (l *LoggerPusher) linkMsgQ() Ch {
 func (l *LoggerPusher) WithConsole(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer logger.Sync()
+		start := time.Now()
+		path := r.URL.Path
+		query := r.URL.RawQuery
 
-		if ch := l.linkMsgQ(); ch != nil {
+		next(w, r)
+
+		cost := time.Since(start)
+		logger.Info(path,
+			zap.String("method", r.Method),
+			zap.String("path", path),
+			zap.String("query", query),
+			zap.String("user-agent", r.UserAgent()),
+			zap.Duration("cost", cost),
+		)
+	}
+}
+
+func (l *LoggerPusher) WithMsgQ(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if ch := l.linkMsgQ(); ch == nil {
 			next(w, r)
+			return
 		} else {
 			start := time.Now()
 			path := r.URL.Path
 			query := r.URL.RawQuery
-
-			msgs := make([]byte, key.LogReadBuffer)
-			_, err := r.Response.Body.Read(msgs)
+			next(w, r)
+			cost := time.Since(start)
+			log.Println("init data ok")
+			err := tool.SendToMsgQ(ch, key.LogMsgQueueName, "middleware log", "",
+				r.Method,
+				path,
+				query,
+				r.UserAgent(),
+				cost,
+			)
 			if err != nil {
-				logger.Error("read request msg err", zap.Error(err))
+				log.Println(err)
 				return
 			}
-
-			next(w, r)
-
-			cost := time.Since(start)
-			logger.Info(path,
-				zap.Int("status", r.Response.StatusCode),
-				zap.String("method", r.Method),
-				zap.String("path", path),
-				zap.String("query", query),
-				zap.String("msgs", string(msgs)),
-				zap.String("user-agent", r.UserAgent()),
-				zap.Duration("cost", cost),
-			)
+			return
 		}
 	}
 }
