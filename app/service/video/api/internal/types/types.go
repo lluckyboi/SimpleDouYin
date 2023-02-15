@@ -24,7 +24,7 @@ type FeedResponse struct {
 	StatusCode int32   `json:"status_code"`
 	StatusMsg  string  `json:"status_msg"`
 	NextTime   int64   `json:"next_time"`
-	VideoList  []video `json:"video_list"`
+	VideoList  []Video `json:"video_list"`
 }
 
 type Video struct {
@@ -54,5 +54,5 @@ type PublishListRequest struct {
 type PublishListResponse struct {
 	StatusCode int32   `json:"status_code"`
 	StatusMsg  string  `json:"status_msg"`
-	VideoList  []video `json:"video_list"`
+	VideoList  []Video `json:"video_list"`
 }
