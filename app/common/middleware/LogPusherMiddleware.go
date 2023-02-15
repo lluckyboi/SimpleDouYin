@@ -26,7 +26,7 @@ func NewLoggerPusher(host, user, pass string) *LoggerPusher {
 	}
 }
 
-func (l *LoggerPusher) linkMsgQ() *amqp.Channel {
+func (l *LoggerPusher) LinkMsgQ() *amqp.Channel {
 	//连接RMQ
 	RMQConn, err := amqp.Dial("amqp://" + l.MsgQUser + ":" + l.MsgQPass + "@" + l.MsgQHost + "/")
 	log.Println("amqp://" + l.MsgQUser + ":" + l.MsgQPass + "@" + l.MsgQHost + "/")
@@ -65,7 +65,7 @@ func (l *LoggerPusher) WithConsole(next http.HandlerFunc) http.HandlerFunc {
 
 func (l *LoggerPusher) WithMsgQ(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if ch := l.linkMsgQ(); ch == nil {
+		if ch := l.LinkMsgQ(); ch == nil {
 			next(w, r)
 			return
 		} else {
