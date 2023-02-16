@@ -38,8 +38,10 @@ func (l *UserRegisterLogic) UserRegister(req *types.RegisterRequest) (resp *type
 		return resp, nil
 	}
 
+	//哈希取模
+	suf := tool.Hash_Mode(req.UserName, key.RedisHashMod)
 	//先查询用户名是否已注册
-	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserNameCacheKey, req.UserName)
+	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserNameCacheKey+suf, req.UserName)
 	if bl.Val() == true {
 		resp.StatusMsg = "用户名已存在"
 		resp.StatusCode = status.ErrAlreadyHaveUser

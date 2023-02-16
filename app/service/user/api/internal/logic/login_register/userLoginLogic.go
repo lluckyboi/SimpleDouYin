@@ -37,9 +37,10 @@ func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginRe
 		resp.StatusMsg = "长度错误"
 		return resp, nil
 	}
-
+	//哈希取模
+	suf := tool.Hash_Mode(req.UserName, key.RedisHashMod)
 	//验证用户名是否存在
-	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserNameCacheKey, req.UserName)
+	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserNameCacheKey+suf, req.UserName)
 	if bl.Val() == false {
 		resp.StatusMsg = "用户名不存在"
 		resp.StatusCode = status.ErrNoSuchUser
