@@ -9,6 +9,8 @@ const (
 	RedisUserIDLastTimeStamp = "userid_last_timestamp"
 	// RedisVideoIDLastTimeStamp 上次生成video_id时间戳
 	RedisVideoIDLastTimeStamp = "video_id_last_timestamp"
+	// RedisHashMod redis big key拆分 哈希模数
+	RedisHashMod uint64 = 9
 )
 
 const (
