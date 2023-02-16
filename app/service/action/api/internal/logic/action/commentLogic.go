@@ -77,6 +77,8 @@ func (l *CommentLogic) Comment(req *types.CommentReq) (*types.CommentResp, error
 		}
 	}
 
+	//敏感词和谐
+	_, req.CommentId = l.svcCtx.SensitiveT.Match(req.CommentText)
 	//rpc
 	Grsp, err := l.svcCtx.ActionClient.Comment(l.ctx, &action.CommentReq{
 		UserId:      claims.UserId,

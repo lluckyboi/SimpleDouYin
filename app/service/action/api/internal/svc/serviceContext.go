@@ -5,6 +5,7 @@ import (
 	"SimpleDouYin/app/common/jwt"
 	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/middleware"
+	"SimpleDouYin/app/common/tool"
 	"SimpleDouYin/app/service/action/api/internal/config"
 	"SimpleDouYin/app/service/action/rpc/action"
 	"github.com/go-redis/redis"
@@ -26,6 +27,7 @@ type ServiceContext struct {
 	ActionClient action.Action
 	RedisDB      *redis.Client
 	GormDB       *gorm.DB
+	SensitiveT   *tool.SensitiveTrie
 }
 
 func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
@@ -44,6 +46,7 @@ func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
 			Password: c.RedisDB.RPass,
 			DB:       0, // use default DB
 		}),
+		SensitiveT:          tool.NewSensitiveTrie(c.DirtyReplace.Replace).Init(c.DirtyReplace.Words),
 		CORSMiddleware:      middleware.NewCORSMiddleware().Handle,
 		LimitMiddleware:     middleware.NewLimitMiddleware(key.LimitKeyActionApi, c.LimitKey.Seconds, c.LimitKey.Quota).Handle,
 		LogPusherMiddleware: middleware.NewLoggerPusher(common.MsgQHost, common.MsgQUser, common.MsgQPass).WithMsgQ,

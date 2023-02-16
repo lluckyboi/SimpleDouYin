@@ -21,4 +21,9 @@ type Config struct {
 	DB struct {
 		DataSource string
 	}
+	//敏感词列表
+	DirtyReplace struct {
+		Words   []string
+		Replace rune
+	}
 }
