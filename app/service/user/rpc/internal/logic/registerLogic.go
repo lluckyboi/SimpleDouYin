@@ -95,9 +95,12 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterRes, error) {
 		logx.Error("user Register 密码入库错误:", ds.Error)
 		return regs, nil
 	}
-	//用户名和id写入缓存
-	l.svcCtx.Redis.SAdd("username", in.Username)
-	l.svcCtx.Redis.SAdd("user_id", User.UserID)
+	//哈希取模
+	sufName := tool.Hash_Mode(in.Username, key.RedisHashMod)
+	sufId := tool.Hash_Mode(strconv.FormatInt(User.UserID, 10), key.RedisHashMod)
+	//用户名和id写入缓存 根据hash_mod结果拆分
+	l.svcCtx.Redis.SAdd(key.RedisUserNameCacheKey+sufName, in.Username)
+	l.svcCtx.Redis.SAdd(key.RedisUserIdCacheKey+sufId, User.UserID)
 
 	regs.StatusCode = status.SuccessCode
 	regs.StatusMsg = "注册成功"

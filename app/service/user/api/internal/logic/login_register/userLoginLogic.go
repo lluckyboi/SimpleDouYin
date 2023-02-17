@@ -10,6 +10,8 @@ import (
 	"SimpleDouYin/app/service/user/dao/model"
 	"SimpleDouYin/app/service/user/rpc/user"
 	"context"
+	"errors"
+	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -42,9 +44,19 @@ func (l *UserLoginLogic) UserLogin(req *types.LoginRequest) (resp *types.LoginRe
 	//验证用户名是否存在
 	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserNameCacheKey+suf, req.UserName)
 	if bl.Val() == false {
-		resp.StatusMsg = "用户名不存在"
-		resp.StatusCode = status.ErrNoSuchUser
-		return resp, nil
+		res := l.svcCtx.GormDB.Where("username = ?", req.UserName).First(&model.User{})
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			resp.StatusMsg = "用户名不存在"
+			resp.StatusCode = status.ErrNoSuchUser
+			return resp, nil
+		} else if res.Error != nil {
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = status.InfoErrOfServer
+			logx.Error("校验用户名错误：", res.Error)
+			return resp, nil
+		}
+		//回写缓存
+		l.svcCtx.RedisDB.SAdd(key.RedisUserNameCacheKey+suf, req.UserName)
 	}
 	logx.Info("验证用户名是否存在 success")
 

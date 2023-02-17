@@ -4,8 +4,12 @@ import (
 	"SimpleDouYin/app/common/jwt"
 	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/status"
+	"SimpleDouYin/app/common/tool"
+	"SimpleDouYin/app/service/user/dao/model"
 	"SimpleDouYin/app/service/user/rpc/user"
 	"context"
+	"errors"
+	"gorm.io/gorm"
 	"log"
 	"strconv"
 
@@ -47,12 +51,24 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoRequest) (*types.Ge
 		return resp, nil
 	}
 
+	//哈希取模
+	sufId := tool.Hash_Mode(req.UserId, key.RedisHashMod)
 	//查询id是否存在
-	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserIdCacheKey, UserId)
+	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserIdCacheKey+sufId, UserId)
 	if bl.Val() == false {
-		resp.StatusCode = status.ErrNoSuchUser
-		resp.StatusMsg = "无效的id"
-		return resp, nil
+		res := l.svcCtx.GormDB.Where("user_id = ?", UserId).First(&model.User{})
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			resp.StatusMsg = "用户ID不存在"
+			resp.StatusCode = status.ErrNoSuchUser
+			return resp, nil
+		} else if res.Error != nil {
+			resp.StatusCode = status.ErrOfServer
+			resp.StatusMsg = status.InfoErrOfServer
+			logx.Error("校验用户ID错误：", res.Error)
+			return resp, nil
+		}
+		//回写缓存
+		l.svcCtx.RedisDB.SAdd(key.RedisUserIdCacheKey+sufId, UserId)
 	}
 
 	//调用rpc查询

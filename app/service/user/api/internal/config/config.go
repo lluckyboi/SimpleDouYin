@@ -18,4 +18,7 @@ type Config struct {
 		//请求上限
 		Quota int
 	}
+	DB struct {
+		DataSource string
+	}
 }

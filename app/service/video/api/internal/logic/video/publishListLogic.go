@@ -4,6 +4,7 @@ import (
 	"SimpleDouYin/app/common/jwt"
 	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/status"
+	"SimpleDouYin/app/common/tool"
 	"SimpleDouYin/app/service/video/dao/model"
 	"SimpleDouYin/app/service/video/rpc/videosv"
 	"context"
@@ -48,21 +49,24 @@ func (l *PublishListLogic) PublishList(req *types.PublishListRequest) (*types.Pu
 		resp.StatusMsg = "UID有误或解析错误"
 		return resp, nil
 	}
+	//哈希取模
+	sufId := tool.Hash_Mode(req.UserId, key.RedisHashMod)
 	//查询id是否存在
-	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserIdCacheKey, uid)
+	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserIdCacheKey+sufId, uid)
 	if bl.Val() == false {
-		var user []model.User
-		if res := l.svcCtx.GormDB.
-			Where("user_id = ?", uid).
-			First(&user); res.Error != nil && !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		res := l.svcCtx.GormDB.Where("user_id = ?", uid).First(&model.User{})
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			resp.StatusMsg = "用户ID不存在"
+			resp.StatusCode = status.ErrNoSuchUser
+			return resp, nil
+		} else if res.Error != nil {
 			resp.StatusCode = status.ErrOfServer
 			resp.StatusMsg = status.InfoErrOfServer
-			return resp, nil
-		} else {
-			resp.StatusCode = status.ErrNoSuchUser
-			resp.StatusMsg = "无效的id"
+			logx.Error("校验用户ID错误：", res.Error)
 			return resp, nil
 		}
+		//回写缓存
+		l.svcCtx.RedisDB.SAdd(key.RedisUserIdCacheKey+sufId, uid)
 	}
 
 	Grsp, err := l.svcCtx.VideoClient.PublishList(l.ctx, &videosv.PublishListReq{

@@ -2,9 +2,14 @@ package chat
 
 import (
 	"SimpleDouYin/app/common/jwt"
+	"SimpleDouYin/app/common/key"
 	"SimpleDouYin/app/common/status"
+	"SimpleDouYin/app/common/tool"
+	"SimpleDouYin/app/service/chat/dao/model"
 	"SimpleDouYin/app/service/chat/rpc/chat"
 	"context"
+	"errors"
+	"gorm.io/gorm"
 	"log"
 	"strconv"
 
@@ -45,6 +50,26 @@ func (l *MsgRecordLogic) MsgRecord(req *types.MsgRecordReq) (*types.MsgRecordRes
 		resp.StatusCode = strconv.Itoa(status.ErrOfServer)
 		resp.StatusMsg = "ID有误或服务器错误"
 		return resp, nil
+	}
+
+	//哈希取模
+	sufId := tool.Hash_Mode(req.ToUserId, key.RedisHashMod)
+	//查询id是否存在
+	bl := l.svcCtx.RedisDB.SIsMember(key.RedisUserIdCacheKey+sufId, tuid)
+	if bl.Val() == false {
+		res := l.svcCtx.GormDB.Where("user_id = ?", tuid).First(&model.User{})
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			resp.StatusMsg = "用户ID不存在"
+			resp.StatusCode = strconv.Itoa(status.ErrNoSuchUser)
+			return resp, nil
+		} else if res.Error != nil {
+			resp.StatusCode = strconv.Itoa(status.ErrOfServer)
+			resp.StatusMsg = status.InfoErrOfServer
+			logx.Error("校验用户ID错误：", res.Error)
+			return resp, nil
+		}
+		//回写缓存
+		l.svcCtx.RedisDB.SAdd(key.RedisUserIdCacheKey+sufId, tuid)
 	}
 
 	//调rpc
