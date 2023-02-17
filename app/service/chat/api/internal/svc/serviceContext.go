@@ -48,7 +48,7 @@ func NewServiceContext(c config.Config, JWTMap *jwt.JWTMap) *ServiceContext {
 		}),
 		SensitiveT:          tool.NewSensitiveTrie(c.DirtyReplace.Replace).Init(c.DirtyReplace.Words),
 		CORSMiddleware:      middleware.NewCORSMiddleware().Handle,
-		LimitMiddleware:     middleware.NewLimitMiddleware(key.LimitKeyActionApi, c.LimitKey.Seconds, c.LimitKey.Quota).Handle,
+		LimitMiddleware:     middleware.NewLimitMiddleware(key.LimitKeyChatApi, c.LimitKey.Seconds, c.LimitKey.Quota).Handle,
 		LogPusherMiddleware: middleware.NewLoggerPusher(common.MsgQHost, common.MsgQUser, common.MsgQPass).WithMsgQ,
 	}
 }
