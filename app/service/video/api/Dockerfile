@@ -13,7 +13,7 @@ WORKDIR /server
 # 将代码复制到容器中
 COPY etc /server/etc
 COPY internal /server/internal
-COPY ./user.go /server
+COPY ./video.go /server
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
@@ -21,6 +21,6 @@ RUN apk update \
     && apk add tzdata \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
-CMD ["chmod 733 user.go","chmod +x user.go"]
+CMD ["chmod 733 video.go","chmod +x video.go"]
 # 启动容器时运行的命令
-CMD ["go run user.go -f etc/user.aml"]
+CMD ["go run video.go -f etc/video.aml"]
