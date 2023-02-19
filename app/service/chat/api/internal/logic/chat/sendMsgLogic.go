@@ -81,6 +81,9 @@ func (l *SendMsgLogic) SendMsg(req *types.SendMsgReq) (*types.SendMsgResp, error
 		return resp, nil
 	}
 
+	//敏感词和谐
+	_, req.Content = l.svcCtx.SensitiveT.Match(req.Content)
+
 	Grsp, err := l.svcCtx.ChatClient.SendMsg(l.ctx, &chat.SendMsgReq{
 		UserId:       claims.UserId,
 		TargetUserId: tuid,
