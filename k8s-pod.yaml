@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-douyin
+  namespace: douyin
+  labels:
+    app: simple-douyin
+spec:
+  containers:
+    - name: simple-douyin
+      image: >-
+        habor.fengxiangrui.top/Douyin/douyin:v1.0
+      volumeMounts:
+        - mountPath: app/service
+          name: douyin-config
+      ports:
+        - name: user-svc
+          containerPort: 8099
+          protocol: TCP
+  volumes:
+    - name: douyin-config
+      hostPath:
+        path: /home/douyin/config

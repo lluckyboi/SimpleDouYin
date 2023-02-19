@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-douyin
+  namespace: douyin
+  labels:
+    app: simple-douyin
+spec:
+  selector:
+    app: simple-douyin
+  ports:
+    - name: user-svc
+      protocol: TCP
+      port: 8099
+      nodePort: 32898
+      targetPort: 8089
+  type: NodePort
