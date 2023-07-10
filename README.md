@@ -2,4 +2,4 @@
 
 ### 🧬架构
 
-![dousheng](http://typora.fengxiangrui.top/1676776880.png)
+![dousheng](http://typora.fengxiangrui.top/1688973443.PNG)
